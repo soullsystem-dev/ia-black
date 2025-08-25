@@ -1,109 +1,195 @@
 <!doctype html>
 <html lang="pt-br">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>IA Black — Quiz</title>
-  <meta name="description" content="Quiz rápido, design neon estilo Matrix, preserva UTMs e envia respostas para o checkout." />
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>IA Black — Quiz</title>
+<meta name="description" content="Quiz rápido, design neon estilo Matrix, preserva UTMs e envia respostas ao checkout." />
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  :root{--neon:#15ff95;--neon2:#0bd47a;--bg:#050505;--glass:rgba(255,255,255,.05);--border:rgba(21,255,149,.18)}
+  html,body{height:100%}
+  body{background:radial-gradient(100% 50% at 50% 0, rgba(21,255,149,.08), transparent 60%), var(--bg);color:#eafff4;font-family:"Share Tech Mono", ui-monospace, monospace;letter-spacing:.2px}
+  .matrix{position:fixed;inset:0;pointer-events:none;opacity:.25;background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120"><text x="6" y="20" fill="%2315ff95" fill-opacity=".12" font-family="monospace" font-size="14">ｱ ﾈ ﾓ ﾛ ﾃ 1 0 ｱ ﾈ ﾓ ﾛ ﾃ</text></svg>');background-size:120px 120px;animation:drift 18s linear infinite}
+  @keyframes drift{from{background-position:0 0}to{background-position:0 120px}}
+  .glass{background:var(--glass);border:1px solid var(--border);box-shadow:0 0 0 1px rgba(21,255,149,.08),0 10px 30px rgba(0,0,0,.5),inset 0 0 30px rgba(21,255,149,.05)}
+  .btn{background:linear-gradient(90deg,var(--neon),var(--neon2));color:#032818;border-radius:16px;font-weight:800;letter-spacing:.5px;transition:transform .12s,filter .12s;box-shadow:0 0 30px rgba(21,255,149,.35)}
+  .btn:hover{filter:brightness(1.08);transform:translateY(-1px)}
+  .btn-ghost{background:rgba(0,0,0,.55);border:1px solid var(--border);border-radius:14px;text-align:left}
+  .btn-ghost:active{background:rgba(21,255,149,.1)}
+  .pill{border:1px solid var(--border);background:rgba(21,255,149,.08);border-radius:999px}
+  .progress{height:8px;background:#0b0b0b;border:1px solid rgba(255,255,255,.1);border-radius:999px;overflow:hidden}
+  .progress>i{display:block;height:100%;width:0%;background:linear-gradient(90deg,var(--neon),var(--neon2))}
+  h1{font-size:clamp(26px,5vw,44px);line-height:1.1} h3{font-size:clamp(18px,3.8vw,24px)}
+  .hidden{display:none !important}
+</style>
 
-  <!-- Fonte estilo terminal -->
-  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
-
-  <!-- Tailwind (CDN) -->
-  <script src="https://cdn.tailwindcss.com"></script>
-
-  <style>
-    :root{
-      --neon:#15ff95; --neon2:#0bd47a; --bg:#050505;
-      --glass: rgba(255,255,255,.05);
-      --border: rgba(21,255,149,.18);
-    }
-    html,body{height:100%}
-    body{
-      background: radial-gradient(100% 50% at 50% 0, rgba(21,255,149,.08), transparent 60%), var(--bg);
-      color:#eafff4;
-      font-family: "Share Tech Mono", ui-monospace, monospace;
-      letter-spacing:.2px;
-    }
-    /* “chuva” sutil de código */
-    .matrix {
-      position: fixed; inset: 0; pointer-events:none; opacity:.25;
-      background-image: url('data:image/svg+xml;utf8,\
-<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120">\
-  <text x="6" y="20" fill="%2315ff95" fill-opacity=".12" font-family="monospace" font-size="14">ｱ ﾈ ﾓ ﾛ ﾃ 1 0 ｱ ﾈ ﾓ ﾛ ﾃ</text>\
-</svg>');
-      background-size: 120px 120px;
-      animation: drift 18s linear infinite;
-    }
-    @keyframes drift { from {background-position:0 0} to {background-position:0 120px} }
-
-    .glass {
-      background: var(--glass);
-      border: 1px solid var(--border);
-      box-shadow: 0 0 0 1px rgba(21,255,149,.08), 0 10px 30px rgba(0,0,0,.5), inset 0 0 30px rgba(21,255,149,.05);
-    }
-    .btn {
-      background: linear-gradient(90deg,var(--neon),var(--neon2));
-      color:#032818;
-      border-radius: 16px;
-      font-weight: 800;
-      letter-spacing:.5px;
-      transition: transform .12s ease, filter .12s ease;
-      box-shadow: 0 0 30px rgba(21,255,149,.35);
-    }
-    .btn:hover { filter:brightness(1.08); transform: translateY(-1px) }
-    .btn-ghost{
-      background: rgba(0,0,0,.55);
-      border:1px solid var(--border);
-      border-radius:14px;
-      transition: border-color .12s ease, background .12s ease;
-      text-align:left;
-    }
-    .btn-ghost:hover{ border-color: rgba(21,255,149,.5); background:rgba(21,255,149,.06) }
-    .pill{ border:1px solid var(--border); background:rgba(21,255,149,.08); border-radius:999px; }
-    .progress{ height:8px; background:#0b0b0b; border:1px solid rgba(255,255,255,.1); border-radius:999px; overflow:hidden }
-    .progress>i{ display:block; height:100%; width:0%; background:linear-gradient(90deg,var(--neon),var(--neon2)) }
-
-    /* tipografia responsiva */
-    h1{ font-size: clamp(26px, 5vw, 44px); line-height:1.1 }
-    h3{ font-size: clamp(18px, 3.8vw, 24px) }
-  </style>
-
-  <!-- Meta Pixel (passar ?pixel=ID ou fixe no código) -->
-  <script>
+<!-- Meta Pixel com try/catch para não travar em webviews -->
+<script>
+  try{
     !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
     n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
     n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
     t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
-    (function(){
-      const q=new URLSearchParams(location.search);
-      const PIXEL=q.get('pixel')||'REPLACE_WITH_PIXEL_ID';
-      fbq('init', PIXEL);
-      fbq('track', 'PageView');
-    })();
-  </script>
+    (function(){var q=new URLSearchParams(location.search);var PIXEL=q.get('pixel')||'REPLACE_WITH_PIXEL_ID';fbq('init',PIXEL);fbq('track','PageView')})();
+  }catch(e){}
+</script>
 </head>
 <body>
-  <div class="matrix"></div>
+<div class="matrix"></div>
 
-  <!-- HUD -->
-  <header class="sticky top-0 z-30 backdrop-blur bg-black/60 border-b border-white/10">
-    <div class="max-w-xl mx-auto px-4 py-3 flex items-center justify-between">
-      <div class="pill px-3 py-1 text-xs">IA BLACK • QUIZ</div>
-      <div id="progress" class="text-xs text-emerald-300/80"></div>
+<header class="sticky top-0 z-30 backdrop-blur bg-black/60 border-b border-white/10">
+  <div class="max-w-xl mx-auto px-4 py-3 flex items-center justify-between">
+    <div class="pill px-3 py-1 text-xs">IA BLACK • QUIZ</div>
+    <div id="progress" class="text-xs text-emerald-300/80"></div>
+  </div>
+</header>
+
+<main class="max-w-xl mx-auto px-4 py-8">
+  <!-- Intro -->
+  <section id="intro" class="glass rounded-2xl p-6 md:p-8 space-y-4">
+    <h1 class="font-black">Descubra seu caminho para faturar no sigilo</h1>
+    <p class="text-emerald-100/80">Responda 5 perguntas rápidas. No final, liberamos o acesso ao mecanismo ideal. <em>Leva menos de 60 segundos.</em></p>
+    <button class="btn px-6 py-4 w-full text-lg" onclick="startQuiz()">COMEÇAR AGORA</button>
+    <p class="text-[11px] text-white/50">As UTMs da campanha serão preservadas até o checkout.</p>
+  </section>
+
+  <!-- Quiz pré-renderizado -->
+  <form id="quiz" class="hidden mt-6 space-y-6">
+    <div class="glass rounded-2xl p-6">
+      <div class="flex items-center justify-between mb-3">
+        <span class="pill px-3 py-1 text-[11px]">DIAGNÓSTICO • <b id="stepLabel">1/5</b></span>
+      </div>
+      <div class="progress mb-5"><i id="bar"></i></div>
+
+      <!-- Perguntas -->
+      <div id="q1" class="space-y-3">
+        <h3 class="text-emerald-300">Qual seu principal objetivo agora?</h3>
+        <div class="grid gap-3">
+          <button type="button" class="btn-ghost px-4 py-3" onclick="choose('objetivo','Renda extra imediata')">Renda extra imediata</button>
+          <button type="button" class="btn-ghost px-4 py-3" onclick="choose('objetivo','Estruturar vendas no sigilo')">Estruturar vendas no sigilo</button>
+          <button type="button" class="btn-ghost px-4 py-3" onclick="choose('objetivo','Validar um produto')">Validar um produto</button>
+          <button type="button" class="btn-ghost px-4 py-3" onclick="choose('objetivo','Escalar o que já vende')">Escalar o que já vende</button>
+        </div>
+      </div>
+
+      <div id="q2" class="space-y-3 hidden">
+        <h3 class="text-emerald-300">Seu nível hoje?</h3>
+        <div class="grid gap-3">
+          <button type="button" class="btn-ghost px-4 py-3" onclick="choose('experiencia','Iniciante')">Iniciante</button>
+          <button type="button" class="btn-ghost px-4 py-3" onclick="choose('experiencia','Intermediário')">Intermediário</button>
+          <button type="button" class="btn-ghost px-4 py-3" onclick="choose('experiencia','Avançado')">Avançado</button>
+        </div>
+      </div>
+
+      <div id="q3" class="space-y-3 hidden">
+        <h3 class="text-emerald-300">Quanto tempo por dia você tem?</h3>
+        <div class="grid gap-3">
+          <button type="button" class="btn-ghost px-4 py-3" onclick="choose('tempo','< 1h')">&lt; 1h</button>
+          <button type="button" class="btn-ghost px-4 py-3" onclick="choose('tempo','1–2h')">1–2h</button>
+          <button type="button" class="btn-ghost px-4 py-3" onclick="choose('tempo','3h+')">3h+</button>
+        </div>
+      </div>
+
+      <div id="q4" class="space-y-3 hidden">
+        <h3 class="text-emerald-300">Quer aparecer nos conteúdos?</h3>
+        <div class="grid gap-3">
+          <button type="button" class="btn-ghost px-4 py-3" onclick="choose('exposicao','Não, zero exposição')">Não, zero exposição</button>
+          <button type="button" class="btn-ghost px-4 py-3" onclick="choose('exposicao','Talvez, pouco')">Talvez, pouco</button>
+          <button type="button" class="btn-ghost px-4 py-3" onclick="choose('exposicao','Sim, sem problemas')">Sim, sem problemas</button>
+        </div>
+      </div>
+
+      <div id="q5" class="space-y-3 hidden">
+        <h3 class="text-emerald-300">Qual orçamento para iniciar?</h3>
+        <div class="grid gap-3">
+          <button type="button" class="btn-ghost px-4 py-3" onclick="choose('orcamento','R$0 a R$10/dia')">R$0 a R$10/dia</button>
+          <button type="button" class="btn-ghost px-4 py-3" onclick="choose('orcamento','R$10 a R$30/dia')">R$10 a R$30/dia</button>
+          <button type="button" class="btn-ghost px-4 py-3" onclick="choose('orcamento','R$30+/dia')">R$30+/dia</button>
+        </div>
+      </div>
+
+      <!-- Navegação -->
+      <div class="mt-4 flex justify-between text-xs text-white/60">
+        <button type="button" class="underline" onclick="prev()">Voltar</button>
+        <button type="button" class="underline" onclick="skip()">Pular</button>
+      </div>
     </div>
-  </header>
+  </form>
 
-  <main class="max-w-xl mx-auto px-4 py-8">
-    <!-- Hero / Intro -->
-    <section id="intro" class="glass rounded-2xl p-6 md:p-8 space-y-4">
-      <h1 class="font-black">Descubra seu caminho para faturar no sigilo</h1>
-      <p class="text-emerald-100/80">Responda 5 perguntas rápidas. No final, liberamos o acesso ao mecanismo ideal para você. <em>Leva menos de 60 segundos.</em></p>
-      <!-- onclick: fallback pra navegadores que bloqueiam listeners (IG/Safari) -->
-      <button id="startBtn" class="btn px-6 py-4 w-full text-lg sfx" onclick="startQuiz()">COMEÇAR AGORA</button>
-      <p class="text-[11px] text-white/50">As UTMs da campanha serão preservadas até o checkout.</p>
-    </section>
+  <!-- Lead -->
+  <section id="lead" class="hidden mt-6 glass rounded-2xl p-6 space-y-4">
+    <h3 class="font-bold">Quase lá! Libere seu acesso 👇</h3>
+    <div class="grid sm:grid-cols-2 gap-3">
+      <input id="nome" class="w-full rounded-xl bg-black/40 border border-white/10 px-4 py-3" placeholder="Seu nome (opcional)">
+      <input id="whats" class="w-full rounded-xl bg-black/40 border border-white/10 px-4 py-3" placeholder="Seu WhatsApp (opcional)">
+    </div>
+    <button class="btn px-6 py-4 w-full text-lg" onclick="finalizar()">LIBERAR ACESSO</button>
+    <p class="text-[11px] text-white/50">Ao continuar, você concorda com a política de privacidade.</p>
+  </section>
+</main>
 
-    <!-- Quiz -->
-    <form id="quiz" class="hidden mt-6 space-y-6">
-      <div class="glass rounded-2xl p-6"
+<footer class="py-10 text-center text-[11px] text-white/40">© <span id="year"></span> IA Black</footer>
+
+<script>
+  /* ===== Estado & SFX ===== */
+  const DESTINO_CHECKOUT='https://go.pepperpay.com.br/hb90b';
+  const params=new URLSearchParams(location.search);
+  const keepParams=['utm_source','utm_medium','utm_campaign','utm_content','utm_term','utm_id','fbclid'];
+  const answers={}; let step=1; const total=5;
+
+  // som simples (WebAudio) com fallback silencioso
+  let AC; function ensureAudio(){ if(!AC){ const C=window.AudioContext||window.webkitAudioContext; if(C){ AC=new C(); } } }
+  function beep(f=700,d=0.09){ try{ if(!AC) return; const t=AC.currentTime,o=AC.createOscillator(),g=AC.createGain(); o.type='square'; o.frequency.setValueAtTime(f,t); g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(0.06,t+0.01); g.gain.exponentialRampToValueAtTime(0.0001,t+d); o.connect(g).connect(AC.destination); o.start(t); o.stop(t+d);}catch(e){} }
+  document.addEventListener('pointerdown',()=>{ensureAudio()},{once:true});
+
+  /* ===== UI helpers ===== */
+  const $=s=>document.querySelector(s);
+  function setProgress(){ $('#stepLabel').textContent=`${Math.min(step,total)}/${total}`; $('#bar').style.width=`${Math.round((step-1)/total*100)}%`; $('#progress').textContent=`Etapa ${Math.min(step,total)} de ${total}`; }
+  function show(id){ ['q1','q2','q3','q4','q5'].forEach(i=>$('#'+i).classList.add('hidden')); if(id) $('#'+id).classList.remove('hidden'); }
+
+  /* ===== Fluxo ===== */
+  function startQuiz(){
+    beep(820,0.1);
+    $('#intro').classList.add('hidden');
+    $('#quiz').classList.remove('hidden');
+    step=1; show('q1'); setProgress();
+    try{ fbq('trackCustom','StartQuiz'); }catch(e){}
+  }
+  function choose(key,val){
+    answers[key]=val;
+    beep(680,0.09);
+    try{ fbq('trackCustom','AnswerQuestion',{id:key,answer:val}); }catch(e){}
+    next();
+  }
+  function next(){
+    step++;
+    if(step>total){ // fim do quiz
+      $('#quiz').classList.add('hidden');
+      $('#lead').classList.remove('hidden');
+      $('#nome').focus();
+      return;
+    }
+    show('q'+step); setProgress();
+  }
+  function prev(){ if(step>1){ step--; show('q'+step); setProgress(); beep(520,0.06); } }
+  function skip(){ next(); beep(520,0.06); }
+
+  function slug(t){ return (t||'').normalize('NFD').replace(/[^\w\s-]/g,'').trim().replace(/\s+/g,'-').toLowerCase(); }
+  function finalizar(){
+    beep(900,0.12);
+    const nome=$('#nome').value.trim(); const whats=$('#whats').value.trim();
+    const url=new URL(DESTINO_CHECKOUT);
+    keepParams.forEach(k=>{ if(params.get(k)) url.searchParams.set(k, params.get(k)); });
+    if(nome) url.searchParams.set('q_nome',slug(nome));
+    if(whats) url.searchParams.set('q_whats',slug(whats));
+    Object.entries(answers).forEach(([k,v])=> url.searchParams.set('q_'+slug(k), slug(v)) );
+    try{ fbq('track','Lead'); fbq('trackCustom','SubmitQuiz',answers); }catch(e){}
+    location.href=url.toString();
+  }
+
+  document.getElementById('year').textContent=new Date().getFullYear();
+</script>
+</body>
+</html>
