@@ -3,114 +3,137 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>IA Black — Quiz</title>
-<meta name="description" content="Quiz rápido, design neon estilo Matrix, preserva UTMs e envia respostas ao checkout." />
-<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<title>IA Black — Protocolo + Quiz</title>
+<meta name="description" content="Tela 'Iniciando Protocolo Black' com Matrix animado, HUD XP/Level e quiz com pontos.">
+
+<!-- Fontes -->
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;800;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<!-- Tailwind -->
 <script src="https://cdn.tailwindcss.com"></script>
+
 <style>
-  :root{--neon:#15ff95;--neon2:#0bd47a;--bg:#050505;--glass:rgba(255,255,255,.05);--border:rgba(21,255,149,.18)}
+  :root{--neon:#15ff95;--neon2:#0bd47a;--bg:#050505;--glass:rgba(255,255,255,.06);--border:rgba(21,255,149,.22)}
   html,body{height:100%}
-  body{background:radial-gradient(100% 50% at 50% 0, rgba(21,255,149,.08), transparent 60%), var(--bg);color:#eafff4;font-family:"Share Tech Mono", ui-monospace, monospace;letter-spacing:.2px}
-  .matrix{position:fixed;inset:0;pointer-events:none;opacity:.25;background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120"><text x="6" y="20" fill="%2315ff95" fill-opacity=".12" font-family="monospace" font-size="14">ｱ ﾈ ﾓ ﾛ ﾃ 1 0 ｱ ﾈ ﾓ ﾛ ﾃ</text></svg>');background-size:120px 120px;animation:drift 18s linear infinite}
-  @keyframes drift{from{background-position:0 0}to{background-position:0 120px}}
-  .glass{background:var(--glass);border:1px solid var(--border);box-shadow:0 0 0 1px rgba(21,255,149,.08),0 10px 30px rgba(0,0,0,.5),inset 0 0 30px rgba(21,255,149,.05)}
-  .btn{background:linear-gradient(90deg,var(--neon),var(--neon2));color:#032818;border-radius:16px;font-weight:800;letter-spacing:.5px;transition:transform .12s,filter .12s;box-shadow:0 0 30px rgba(21,255,149,.35)}
-  .btn:hover{filter:brightness(1.08);transform:translateY(-1px)}
-  .btn-ghost{background:rgba(0,0,0,.55);border:1px solid var(--border);border-radius:14px;text-align:left}
-  .btn-ghost:active{background:rgba(21,255,149,.1)}
-  .pill{border:1px solid var(--border);background:rgba(21,255,149,.08);border-radius:999px}
-  .progress{height:8px;background:#0b0b0b;border:1px solid rgba(255,255,255,.1);border-radius:999px;overflow:hidden}
-  .progress>i{display:block;height:100%;width:0%;background:linear-gradient(90deg,var(--neon),var(--neon2))}
-  h1{font-size:clamp(26px,5vw,44px);line-height:1.1} h3{font-size:clamp(18px,3.8vw,24px)}
-  .hidden{display:none !important}
+  body{background:var(--bg);color:#eafff4;font-family:"Share Tech Mono",ui-monospace,monospace;letter-spacing:.2px;overflow-x:hidden}
+  /* HUD */
+  .hud-pill{border:1px solid var(--border);background:rgba(21,255,149,.08);border-radius:999px;backdrop-filter:blur(10px)}
+  /* Botões */
+  .btn{background:linear-gradient(90deg,var(--neon),var(--neon2));color:#032818;border-radius:18px;font-weight:900;letter-spacing:.08em;
+       box-shadow:0 0 40px rgba(21,255,149,.35);transition:transform .12s,filter .12s}
+  .btn:hover{filter:brightness(1.05);transform:translateY(-1px)}
+  .ghost{background:rgba(0,0,0,.55);border:1px solid var(--border);border-radius:14px;text-align:left}
+  .ghost:active{background:rgba(21,255,149,.1)}
+  /* Cartões */
+  .glass{background:var(--glass);border:1px solid var(--border);box-shadow:0 0 0 1px rgba(21,255,149,.1),0 10px 30px rgba(0,0,0,.6),inset 0 0 30px rgba(21,255,149,.06);border-radius:24px}
+  /* Títulos hero */
+  .hero{font-family:"Orbitron",sans-serif; font-weight:900; letter-spacing:.06em;
+        text-shadow:0 0 24px rgba(21,255,149,.35)}
+  /* Barra progresso */
+  .bar{height:8px;background:#0b0b0b;border:1px solid rgba(255,255,255,.12);border-radius:999px;overflow:hidden}
+  .bar>i{display:block;height:100%;width:0%;background:linear-gradient(90deg,var(--neon),var(--neon2))}
+  /* Badge XP que aparece animado */
+  .xp-float{position:fixed;right:16px;top:70px;background:linear-gradient(90deg,var(--neon),var(--neon2));
+            color:#032818;font-weight:900;border-radius:12px;padding:.4rem .7rem;opacity:0;transform:translateY(-10px);
+            box-shadow:0 0 30px rgba(21,255,149,.35);transition:opacity .2s, transform .2s}
+  .xp-float.show{opacity:1;transform:translateY(0)}
+  /* Esconder rápido */
+  .hidden{display:none!important}
 </style>
 
-<!-- Meta Pixel com try/catch para não travar em webviews -->
+<!-- Pixel (protegido) -->
 <script>
   try{
     !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
     n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
     n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
     t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
-    (function(){var q=new URLSearchParams(location.search);var PIXEL=q.get('pixel')||'REPLACE_WITH_PIXEL_ID';fbq('init',PIXEL);fbq('track','PageView')})();
+    (function(){const q=new URLSearchParams(location.search);const PIXEL=q.get('pixel')||'REPLACE_WITH_PIXEL_ID';fbq('init',PIXEL);fbq('track','PageView')})();
   }catch(e){}
 </script>
 </head>
 <body>
-<div class="matrix"></div>
+<!-- Canvas da “chuva” Matrix -->
+<canvas id="matrix" style="position:fixed;inset:0;z-index:-1;"></canvas>
 
+<!-- HUD -->
 <header class="sticky top-0 z-30 backdrop-blur bg-black/60 border-b border-white/10">
   <div class="max-w-xl mx-auto px-4 py-3 flex items-center justify-between">
-    <div class="pill px-3 py-1 text-xs">IA BLACK • QUIZ</div>
-    <div id="progress" class="text-xs text-emerald-300/80"></div>
+    <div class="hud-pill px-3 py-1 text-xs">IA BLACK • PROTOCOLO</div>
+    <div class="hud-pill px-3 py-1 text-xs flex items-center gap-2">
+      <span id="xpHud">0 XP</span><span class="opacity-50">|</span><span id="lvlHud">LVL 1</span>
+    </div>
   </div>
 </header>
 
+<!-- Badge XP flutuante -->
+<div id="xpFloat" class="xp-float">+50 XP</div>
+
 <main class="max-w-xl mx-auto px-4 py-8">
-  <!-- Intro -->
-  <section id="intro" class="glass rounded-2xl p-6 md:p-8 space-y-4">
-    <h1 class="font-black">Descubra seu caminho para faturar no sigilo</h1>
-    <p class="text-emerald-100/80">Responda 5 perguntas rápidas. No final, liberamos o acesso ao mecanismo ideal. <em>Leva menos de 60 segundos.</em></p>
-    <button class="btn px-6 py-4 w-full text-lg" onclick="startQuiz()">COMEÇAR AGORA</button>
-    <p class="text-[11px] text-white/50">As UTMs da campanha serão preservadas até o checkout.</p>
+  <!-- TELA 1 — Protocolo -->
+  <section id="protocolo" class="glass p-6 md:p-10">
+    <div class="text-center space-y-6">
+      <div class="hud-pill inline-block px-3 py-1 text-[11px]">SISTEMA ONLINE</div>
+      <h1 class="hero text-3xl sm:text-4xl md:text-5xl leading-tight">INICIANDO PROTOCOLO<br>BLACK…</h1>
+      <div class="ghost p-4 text-[15px] sm:text-base">Sistema carregado. Pressione para continuar.</div>
+      <button class="btn w-full py-4 text-lg" onclick="iniciarProtocolo()">INICIAR PROTOCOLO</button>
+    </div>
   </section>
 
-  <!-- Quiz pré-renderizado -->
+  <!-- QUIZ -->
   <form id="quiz" class="hidden mt-6 space-y-6">
-    <div class="glass rounded-2xl p-6">
-      <div class="flex items-center justify-between mb-3">
-        <span class="pill px-3 py-1 text-[11px]">DIAGNÓSTICO • <b id="stepLabel">1/5</b></span>
+    <div class="glass p-6">
+      <div class="flex items-center justify-between mb-4">
+        <span class="hud-pill px-3 py-1 text-[11px]">DIAGNÓSTICO • <b id="stepLabel">1/5</b></span>
       </div>
-      <div class="progress mb-5"><i id="bar"></i></div>
+      <div class="bar mb-5"><i id="bar"></i></div>
 
-      <!-- Perguntas -->
+      <!-- perguntas -->
       <div id="q1" class="space-y-3">
         <h3 class="text-emerald-300">Qual seu principal objetivo agora?</h3>
         <div class="grid gap-3">
-          <button type="button" class="btn-ghost px-4 py-3" onclick="choose('objetivo','Renda extra imediata')">Renda extra imediata</button>
-          <button type="button" class="btn-ghost px-4 py-3" onclick="choose('objetivo','Estruturar vendas no sigilo')">Estruturar vendas no sigilo</button>
-          <button type="button" class="btn-ghost px-4 py-3" onclick="choose('objetivo','Validar um produto')">Validar um produto</button>
-          <button type="button" class="btn-ghost px-4 py-3" onclick="choose('objetivo','Escalar o que já vende')">Escalar o que já vende</button>
+          <button type="button" class="ghost px-4 py-3" onclick="choose('objetivo','Renda extra imediata')">Renda extra imediata</button>
+          <button type="button" class="ghost px-4 py-3" onclick="choose('objetivo','Estruturar vendas no sigilo')">Estruturar vendas no sigilo</button>
+          <button type="button" class="ghost px-4 py-3" onclick="choose('objetivo','Validar um produto')">Validar um produto</button>
+          <button type="button" class="ghost px-4 py-3" onclick="choose('objetivo','Escalar o que já vende')">Escalar o que já vende</button>
         </div>
       </div>
 
       <div id="q2" class="space-y-3 hidden">
         <h3 class="text-emerald-300">Seu nível hoje?</h3>
         <div class="grid gap-3">
-          <button type="button" class="btn-ghost px-4 py-3" onclick="choose('experiencia','Iniciante')">Iniciante</button>
-          <button type="button" class="btn-ghost px-4 py-3" onclick="choose('experiencia','Intermediário')">Intermediário</button>
-          <button type="button" class="btn-ghost px-4 py-3" onclick="choose('experiencia','Avançado')">Avançado</button>
+          <button type="button" class="ghost px-4 py-3" onclick="choose('experiencia','Iniciante')">Iniciante</button>
+          <button type="button" class="ghost px-4 py-3" onclick="choose('experiencia','Intermediário')">Intermediário</button>
+          <button type="button" class="ghost px-4 py-3" onclick="choose('experiencia','Avançado')">Avançado</button>
         </div>
       </div>
 
       <div id="q3" class="space-y-3 hidden">
         <h3 class="text-emerald-300">Quanto tempo por dia você tem?</h3>
         <div class="grid gap-3">
-          <button type="button" class="btn-ghost px-4 py-3" onclick="choose('tempo','< 1h')">&lt; 1h</button>
-          <button type="button" class="btn-ghost px-4 py-3" onclick="choose('tempo','1–2h')">1–2h</button>
-          <button type="button" class="btn-ghost px-4 py-3" onclick="choose('tempo','3h+')">3h+</button>
+          <button type="button" class="ghost px-4 py-3" onclick="choose('tempo','< 1h')">&lt; 1h</button>
+          <button type="button" class="ghost px-4 py-3" onclick="choose('tempo','1–2h')">1–2h</button>
+          <button type="button" class="ghost px-4 py-3" onclick="choose('tempo','3h+')">3h+</button>
         </div>
       </div>
 
       <div id="q4" class="space-y-3 hidden">
         <h3 class="text-emerald-300">Quer aparecer nos conteúdos?</h3>
         <div class="grid gap-3">
-          <button type="button" class="btn-ghost px-4 py-3" onclick="choose('exposicao','Não, zero exposição')">Não, zero exposição</button>
-          <button type="button" class="btn-ghost px-4 py-3" onclick="choose('exposicao','Talvez, pouco')">Talvez, pouco</button>
-          <button type="button" class="btn-ghost px-4 py-3" onclick="choose('exposicao','Sim, sem problemas')">Sim, sem problemas</button>
+          <button type="button" class="ghost px-4 py-3" onclick="choose('exposicao','Não, zero exposição')">Não, zero exposição</button>
+          <button type="button" class="ghost px-4 py-3" onclick="choose('exposicao','Talvez, pouco')">Talvez, pouco</button>
+          <button type="button" class="ghost px-4 py-3" onclick="choose('exposicao','Sim, sem problemas')">Sim, sem problemas</button>
         </div>
       </div>
 
       <div id="q5" class="space-y-3 hidden">
         <h3 class="text-emerald-300">Qual orçamento para iniciar?</h3>
         <div class="grid gap-3">
-          <button type="button" class="btn-ghost px-4 py-3" onclick="choose('orcamento','R$0 a R$10/dia')">R$0 a R$10/dia</button>
-          <button type="button" class="btn-ghost px-4 py-3" onclick="choose('orcamento','R$10 a R$30/dia')">R$10 a R$30/dia</button>
-          <button type="button" class="btn-ghost px-4 py-3" onclick="choose('orcamento','R$30+/dia')">R$30+/dia</button>
+          <button type="button" class="ghost px-4 py-3" onclick="choose('orcamento','R$0 a R$10/dia')">R$0 a R$10/dia</button>
+          <button type="button" class="ghost px-4 py-3" onclick="choose('orcamento','R$10 a R$30/dia')">R$10 a R$30/dia</button>
+          <button type="button" class="ghost px-4 py-3" onclick="choose('orcamento','R$30+/dia')">R$30+/dia</button>
         </div>
       </div>
 
-      <!-- Navegação -->
       <div class="mt-4 flex justify-between text-xs text-white/60">
         <button type="button" class="underline" onclick="prev()">Voltar</button>
         <button type="button" class="underline" onclick="skip()">Pular</button>
@@ -118,14 +141,14 @@
     </div>
   </form>
 
-  <!-- Lead -->
-  <section id="lead" class="hidden mt-6 glass rounded-2xl p-6 space-y-4">
+  <!-- LEAD -->
+  <section id="lead" class="hidden mt-6 glass p-6 space-y-4">
     <h3 class="font-bold">Quase lá! Libere seu acesso 👇</h3>
     <div class="grid sm:grid-cols-2 gap-3">
       <input id="nome" class="w-full rounded-xl bg-black/40 border border-white/10 px-4 py-3" placeholder="Seu nome (opcional)">
       <input id="whats" class="w-full rounded-xl bg-black/40 border border-white/10 px-4 py-3" placeholder="Seu WhatsApp (opcional)">
     </div>
-    <button class="btn px-6 py-4 w-full text-lg" onclick="finalizar()">LIBERAR ACESSO</button>
+    <button class="btn w-full py-4 text-lg" onclick="finalizar()">CONTINUAR</button>
     <p class="text-[11px] text-white/50">Ao continuar, você concorda com a política de privacidade.</p>
   </section>
 </main>
@@ -133,63 +156,95 @@
 <footer class="py-10 text-center text-[11px] text-white/40">© <span id="year"></span> IA Black</footer>
 
 <script>
-  /* ===== Estado & SFX ===== */
-  const DESTINO_CHECKOUT='https://go.pepperpay.com.br/hb90b';
-  const params=new URLSearchParams(location.search);
-  const keepParams=['utm_source','utm_medium','utm_campaign','utm_content','utm_term','utm_id','fbclid'];
-  const answers={}; let step=1; const total=5;
+/* ====== Config ====== */
+const DESTINO_CHECKOUT='https://go.pepperpay.com.br/hb90b';
+const params=new URLSearchParams(location.search);
+const keepParams=['utm_source','utm_medium','utm_campaign','utm_content','utm_term','utm_id','fbclid'];
 
-  // som simples (WebAudio) com fallback silencioso
-  let AC; function ensureAudio(){ if(!AC){ const C=window.AudioContext||window.webkitAudioContext; if(C){ AC=new C(); } } }
-  function beep(f=700,d=0.09){ try{ if(!AC) return; const t=AC.currentTime,o=AC.createOscillator(),g=AC.createGain(); o.type='square'; o.frequency.setValueAtTime(f,t); g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(0.06,t+0.01); g.gain.exponentialRampToValueAtTime(0.0001,t+d); o.connect(g).connect(AC.destination); o.start(t); o.stop(t+d);}catch(e){} }
-  document.addEventListener('pointerdown',()=>{ensureAudio()},{once:true});
+/* ====== XP / Level ====== */
+let XP=0, LVL=1;
+const XP_PER_LEVEL=200;     // mude aqui se quiser upar mais rápido
+const XP_ON_START=100;      // +100 ao iniciar protocolo
+const XP_PER_ANSWER=50;     // +50 por resposta
+function addXP(qty){
+  XP+=qty;
+  // level up
+  const newLvl=Math.max(1, Math.floor(XP/XP_PER_LEVEL)+1);
+  if(newLvl!==LVL){ LVL=newLvl; }
+  // HUD
+  document.getElementById('xpHud').textContent=`${XP} XP`;
+  document.getElementById('lvlHud').textContent=`LVL ${LVL}`;
+  // badge flutuante
+  const b=document.getElementById('xpFloat');
+  b.textContent=`+${qty} XP`;
+  b.classList.add('show');
+  setTimeout(()=>b.classList.remove('show'), 900);
+}
 
-  /* ===== UI helpers ===== */
-  const $=s=>document.querySelector(s);
-  function setProgress(){ $('#stepLabel').textContent=`${Math.min(step,total)}/${total}`; $('#bar').style.width=`${Math.round((step-1)/total*100)}%`; $('#progress').textContent=`Etapa ${Math.min(step,total)} de ${total}`; }
-  function show(id){ ['q1','q2','q3','q4','q5'].forEach(i=>$('#'+i).classList.add('hidden')); if(id) $('#'+id).classList.remove('hidden'); }
+/* ====== Áudio ====== */
+let AC; function ensureAudio(){ if(!AC){ const C=window.AudioContext||window.webkitAudioContext; if(C){ AC=new C(); } } }
+function beep(f=720,d=0.1){ try{ if(!AC) return; const t=AC.currentTime,o=AC.createOscillator(),g=AC.createGain(); o.type='square'; o.frequency.setValueAtTime(f,t); g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(0.06,t+0.01); g.gain.exponentialRampToValueAtTime(0.0001,t+d); o.connect(g).connect(AC.destination); o.start(t); o.stop(t+d);}catch(e){} }
+document.addEventListener('pointerdown',()=>{ensureAudio()},{once:true});
 
-  /* ===== Fluxo ===== */
-  function startQuiz(){
-    beep(820,0.1);
-    $('#intro').classList.add('hidden');
-    $('#quiz').classList.remove('hidden');
-    step=1; show('q1'); setProgress();
-    try{ fbq('trackCustom','StartQuiz'); }catch(e){}
-  }
-  function choose(key,val){
-    answers[key]=val;
-    beep(680,0.09);
-    try{ fbq('trackCustom','AnswerQuestion',{id:key,answer:val}); }catch(e){}
-    next();
-  }
-  function next(){
-    step++;
-    if(step>total){ // fim do quiz
-      $('#quiz').classList.add('hidden');
-      $('#lead').classList.remove('hidden');
-      $('#nome').focus();
-      return;
+/* ====== Matrix Rain ====== */
+(function matrix(){
+  const c=document.getElementById('matrix'), ctx=c.getContext('2d');
+  function size(){ c.width=innerWidth; c.height=innerHeight; cols=Math.floor(c.width/14); drops=Array(cols).fill(1); }
+  let cols=0, drops=[];
+  const chars='アカサタナハマヤラワ0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  function draw(){
+    ctx.fillStyle='rgba(0,0,0,0.08)'; ctx.fillRect(0,0,c.width,c.height);
+    ctx.fillStyle='#15ff95'; ctx.font='14px monospace';
+    for(let i=0;i<drops.length;i++){
+      const text=chars[Math.floor(Math.random()*chars.length)];
+      ctx.fillText(text, i*14, drops[i]*16);
+      if(drops[i]*16>c.height && Math.random()>0.975){ drops[i]=0; }
+      drops[i]++;
     }
-    show('q'+step); setProgress();
+    requestAnimationFrame(draw);
   }
-  function prev(){ if(step>1){ step--; show('q'+step); setProgress(); beep(520,0.06); } }
-  function skip(){ next(); beep(520,0.06); }
+  addEventListener('resize', size); size(); draw();
+})();
 
-  function slug(t){ return (t||'').normalize('NFD').replace(/[^\w\s-]/g,'').trim().replace(/\s+/g,'-').toLowerCase(); }
-  function finalizar(){
-    beep(900,0.12);
-    const nome=$('#nome').value.trim(); const whats=$('#whats').value.trim();
-    const url=new URL(DESTINO_CHECKOUT);
-    keepParams.forEach(k=>{ if(params.get(k)) url.searchParams.set(k, params.get(k)); });
-    if(nome) url.searchParams.set('q_nome',slug(nome));
-    if(whats) url.searchParams.set('q_whats',slug(whats));
-    Object.entries(answers).forEach(([k,v])=> url.searchParams.set('q_'+slug(k), slug(v)) );
-    try{ fbq('track','Lead'); fbq('trackCustom','SubmitQuiz',answers); }catch(e){}
-    location.href=url.toString();
-  }
+/* ====== Quiz Fluxo ====== */
+const answers={}; let step=1; const total=5;
+const $=s=>document.querySelector(s);
+const slug=t=>(t||'').normalize('NFD').replace(/[^\w\s-]/g,'').trim().replace(/\s+/g,'-').toLowerCase();
+function setProgress(){ $('#stepLabel').textContent=`${Math.min(step,total)}/${total}`; $('#bar').style.width=`${Math.round((step-1)/total*100)}%`; }
+function show(id){ ['q1','q2','q3','q4','q5'].forEach(i=>$('#'+i).classList.add('hidden')); if(id) $('#'+id).classList.remove('hidden'); }
 
-  document.getElementById('year').textContent=new Date().getFullYear();
+function iniciarProtocolo(){
+  addXP(XP_ON_START); beep(840,0.1);
+  document.getElementById('protocolo').classList.add('hidden');
+  document.getElementById('quiz').classList.remove('hidden');
+  step=1; show('q1'); setProgress();
+  try{ fbq('trackCustom','StartProtocol'); }catch(e){}
+}
+
+function choose(key,val){
+  answers[key]=val; addXP(XP_PER_ANSWER); beep(700,0.09);
+  try{ fbq('trackCustom','AnswerQuestion',{id:key,answer:val}); }catch(e){}
+  next();
+}
+function next(){ step++; if(step>total){ $('#quiz').classList.add('hidden'); $('#lead').classList.remove('hidden'); $('#nome').focus(); return; } show('q'+step); setProgress(); }
+function prev(){ if(step>1){ step--; show('q'+step); setProgress(); beep(520,0.06); } }
+function skip(){ next(); beep(520,0.06); }
+
+function finalizar(){
+  beep(900,0.12);
+  const url=new URL(DESTINO_CHECKOUT);
+  keepParams.forEach(k=>{ if(params.get(k)) url.searchParams.set(k, params.get(k)); });
+  const nome=$('#nome').value.trim(), whats=$('#whats').value.trim();
+  if(nome) url.searchParams.set('q_nome', slug(nome));
+  if(whats) url.searchParams.set('q_whats', slug(whats));
+  Object.entries(answers).forEach(([k,v])=> url.searchParams.set('q_'+slug(k), slug(v)));
+  url.searchParams.set('xp', XP); url.searchParams.set('lvl', LVL);
+  try{ fbq('track','Lead'); fbq('trackCustom','SubmitQuiz',{answers,XP,LVL}); }catch(e){}
+  location.href=url.toString();
+}
+
+/* ====== Rodapé ====== */
+document.getElementById('year').textContent=new Date().getFullYear();
 </script>
 </body>
 </html>
