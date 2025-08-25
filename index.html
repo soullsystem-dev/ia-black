@@ -12,33 +12,59 @@
 <script src="https://cdn.tailwindcss.com"></script>
 
 <style>
-  :root{--neon:#15ff95;--neon2:#0bd47a;--bg:#050505;--glass:rgba(255,255,255,.06);--border:rgba(21,255,149,.22)}
-  html,body{height:100%}
-  body{background:var(--bg);color:#eafff4;font-family:"Share Tech Mono",ui-monospace,monospace;letter-spacing:.2px;overflow-x:hidden}
-  /* HUD */
-  .hud-pill{border:1px solid var(--border);background:rgba(21,255,149,.08);border-radius:999px;backdrop-filter:blur(10px)}
-  /* Botões */
-  .btn{background:linear-gradient(90deg,var(--neon),var(--neon2));color:#032818;border-radius:18px;font-weight:900;letter-spacing:.08em;
-       box-shadow:0 0 40px rgba(21,255,149,.35);transition:transform .12s,filter .12s}
-  .btn:hover{filter:brightness(1.05);transform:translateY(-1px)}
-  .ghost{background:rgba(0,0,0,.55);border:1px solid var(--border);border-radius:14px;text-align:left}
-  .ghost:active{background:rgba(21,255,149,.1)}
-  /* Cartões */
-  .glass{background:var(--glass);border:1px solid var(--border);box-shadow:0 0 0 1px rgba(21,255,149,.1),0 10px 30px rgba(0,0,0,.6),inset 0 0 30px rgba(21,255,149,.06);border-radius:24px}
-  /* Títulos hero */
-  .hero{font-family:"Orbitron",sans-serif; font-weight:900; letter-spacing:.06em;
-        text-shadow:0 0 24px rgba(21,255,149,.35)}
-  /* Barra progresso */
-  .bar{height:8px;background:#0b0b0b;border:1px solid rgba(255,255,255,.12);border-radius:999px;overflow:hidden}
-  .bar>i{display:block;height:100%;width:0%;background:linear-gradient(90deg,var(--neon),var(--neon2))}
-  /* Badge XP que aparece animado */
-  .xp-float{position:fixed;right:16px;top:70px;background:linear-gradient(90deg,var(--neon),var(--neon2));
-            color:#032818;font-weight:900;border-radius:12px;padding:.4rem .7rem;opacity:0;transform:translateY(-10px);
-            box-shadow:0 0 30px rgba(21,255,149,.35);transition:opacity .2s, transform .2s}
-  .xp-float.show{opacity:1;transform:translateY(0)}
-  /* Esconder rápido */
-  .hidden{display:none!important}
+ <style>
+  /* já tinha, só adicionei ajustes */
+  .ghost{
+    background:rgba(0,0,0,.75);   /* ESCURECI mais */
+    border:1px solid var(--border);
+    border-radius:14px;
+    text-align:left;
+    color:#eafff4;
+    text-shadow:0 0 6px rgba(21,255,149,.6),0 0 12px rgba(21,255,149,.4); /* glow */
+  }
+  .ghost:hover{
+    background:rgba(0,0,0,.85);
+    border-color:var(--neon2);
+  }
+
+  .glass{
+    background:rgba(0,0,0,.65);   /* escuro no container */
+    border:1px solid var(--border);
+    box-shadow:0 0 20px rgba(0,0,0,.7), 0 0 20px rgba(21,255,149,.15) inset;
+    border-radius:24px;
+  }
+
+  .hero{
+    font-family:"Orbitron",sans-serif;
+    font-weight:900;
+    letter-spacing:.06em;
+    text-shadow:
+      0 0 8px rgba(21,255,149,.8),
+      0 0 16px rgba(21,255,149,.5),
+      0 0 24px rgba(21,255,149,.3);
+    color:#15ff95;
+  }
+
+  h3{
+    color:#15ff95;
+    text-shadow:0 0 6px rgba(21,255,149,.7);
+  }
+
+  .btn{
+    background:linear-gradient(90deg,var(--neon),var(--neon2));
+    color:#032818;
+    border-radius:18px;
+    font-weight:900;
+    letter-spacing:.08em;
+    box-shadow:0 0 50px rgba(21,255,149,.55), inset 0 0 15px rgba(0,0,0,.8);
+    transition:transform .12s,filter .12s;
+  }
+  .btn:hover{
+    filter:brightness(1.1);
+    transform:translateY(-2px);
+  }
 </style>
+
 
 <!-- Pixel (protegido) -->
 <script>
