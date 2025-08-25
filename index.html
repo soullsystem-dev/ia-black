@@ -12,26 +12,62 @@
 <script src="https://cdn.tailwindcss.com"></script>
 
 <style>
- <style>
-  /* já tinha, só adicionei ajustes */
-  ./* opções do quiz */
-.ghost{
-  background:#15ff95;        /* verde neon sólido */
-  border:1px solid #00cc66;  /* borda verde mais escura */
-  border-radius:14px;
-  text-align:left;
-  color:#000;                /* texto preto forte */
-  font-weight:700;
-  text-shadow:0 0 6px rgba(0,0,0,.6); /* sombra no texto p/ contraste */
-  box-shadow:0 0 18px rgba(21,255,149,.6);
-}
+<style>
+  :root {
+    --neon: #15ff95;
+    --neon2: #07b67a;
+    --dark: #000;
+  }
 
-.ghost:hover{
-  background:#00e680;        /* verde neon mais forte */
-  border-color:#00ff99;
-  box-shadow:0 0 25px rgba(21,255,149,.9);
-}
+  /* Botão principal */
+  .btn {
+    background: var(--neon);
+    color: #000; /* letras pretas fortes */
+    font-weight: 900;
+    border-radius: 18px;
+    padding: 14px 24px;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    text-shadow: 0 0 4px rgba(0,0,0,.6);
+    box-shadow: 0 0 20px var(--neon), 0 0 40px rgba(21,255,149,.5);
+    transition: transform .15s, filter .15s;
+  }
+  .btn:hover {
+    filter: brightness(1.15);
+    transform: translateY(-2px);
+  }
 
+  /* Opções do quiz */
+  .answer {
+    background: var(--neon);
+    color: #fff; /* letras brancas fortes */
+    font-weight: 700;
+    border-radius: 14px;
+    padding: 14px;
+    text-align: center;
+    box-shadow: 0 0 12px var(--neon), inset 0 0 6px rgba(0,0,0,.6);
+    transition: transform .15s, filter .15s;
+  }
+  .answer:hover {
+    filter: brightness(1.2);
+    transform: translateY(-2px);
+  }
+
+  /* Caixa de perguntas */
+  .glass {
+    background: rgba(0,0,0,.8); /* escurece mais a frente */
+    border: 1px solid rgba(21,255,149,.3);
+    border-radius: 20px;
+    padding: 20px;
+  }
+
+  /* Título/pergunta */
+  h3 {
+    color: var(--neon);
+    font-weight: 800;
+    text-shadow: 0 0 8px rgba(21,255,149,.8), 0 0 16px rgba(21,255,149,.6);
+  }
+</style>
 
   .glass{
     background:rgba(0,0,0,.65);   /* escuro no container */
