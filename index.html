@@ -1,318 +1,228 @@
 <!doctype html>
 <html lang="pt-br">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>IA Black — Protocolo + Quiz</title>
-<meta name="description" content="Tela 'Iniciando Protocolo Black' com Matrix animado, HUD XP/Level e quiz com pontos.">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>IA Black – Protocolo</title>
+  <link rel="icon" href="/favicon.ico" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root {
+      --neon: #15ff95;
+      --neon2: #07b67a;
+    }
+    body {
+      margin:0;
+      background:#000;
+      color:#fff;
+      font-family: "Orbitron", sans-serif;
+      overflow-x:hidden;
+    }
 
-<!-- Fontes -->
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;800;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
-<!-- Tailwind -->
-<script src="https://cdn.tailwindcss.com"></script>
+    /* Fundo estilo Matrix */
+    canvas#matrix {
+      position:fixed;
+      top:0;left:0;
+      width:100%;height:100%;
+      z-index:-1;
+      background:#000;
+    }
 
-<style>
-<style>
-  :root {
-    --neon: #15ff95;
-    --neon2: #07b67a;
-    --dark: #000;
-  }
+    /* Containers */
+    .glass {
+      background: rgba(0,0,0,.8);
+      border:1px solid rgba(21,255,149,.3);
+      border-radius: 20px;
+      padding: 20px;
+      box-shadow:0 0 20px rgba(0,0,0,.7), 0 0 25px rgba(21,255,149,.2) inset;
+    }
 
-  /* Botão principal */
-  .btn {
-    background: var(--neon);
-    color: #000; /* letras pretas fortes */
-    font-weight: 900;
-    border-radius: 18px;
-    padding: 14px 24px;
-    text-transform: uppercase;
-    letter-spacing: .08em;
-    text-shadow: 0 0 4px rgba(0,0,0,.6);
-    box-shadow: 0 0 20px var(--neon), 0 0 40px rgba(21,255,149,.5);
-    transition: transform .15s, filter .15s;
-  }
-  .btn:hover {
-    filter: brightness(1.15);
-    transform: translateY(-2px);
-  }
+    h1,h2,h3 {
+      color: var(--neon);
+      text-shadow: 0 0 8px rgba(21,255,149,.8),0 0 16px rgba(21,255,149,.5);
+    }
 
-  /* Opções do quiz */
-  .answer {
-    background: var(--neon);
-    color: #fff; /* letras brancas fortes */
-    font-weight: 700;
-    border-radius: 14px;
-    padding: 14px;
-    text-align: center;
-    box-shadow: 0 0 12px var(--neon), inset 0 0 6px rgba(0,0,0,.6);
-    transition: transform .15s, filter .15s;
-  }
-  .answer:hover {
-    filter: brightness(1.2);
-    transform: translateY(-2px);
-  }
+    /* Botão principal */
+    .btn {
+      background: var(--neon);
+      color:#000;
+      font-weight:900;
+      border-radius:18px;
+      padding:14px 24px;
+      text-transform:uppercase;
+      letter-spacing:.08em;
+      text-shadow:0 0 4px rgba(0,0,0,.6);
+      box-shadow:0 0 20px var(--neon),0 0 40px rgba(21,255,149,.5);
+      transition:transform .15s, filter .15s;
+    }
+    .btn:hover {
+      filter:brightness(1.15);
+      transform:translateY(-2px);
+    }
 
-  /* Caixa de perguntas */
-  .glass {
-    background: rgba(0,0,0,.8); /* escurece mais a frente */
-    border: 1px solid rgba(21,255,149,.3);
-    border-radius: 20px;
-    padding: 20px;
-  }
+    /* Opções do quiz */
+    .answer {
+      background: var(--neon);
+      color:#fff;
+      font-weight:700;
+      border-radius:14px;
+      padding:14px;
+      text-align:center;
+      box-shadow:0 0 12px var(--neon), inset 0 0 6px rgba(0,0,0,.6);
+      transition:transform .15s, filter .15s;
+    }
+    .answer:hover {
+      filter:brightness(1.2);
+      transform:translateY(-2px);
+    }
 
-  /* Título/pergunta */
-  h3 {
-    color: var(--neon);
-    font-weight: 800;
-    text-shadow: 0 0 8px rgba(21,255,149,.8), 0 0 16px rgba(21,255,149,.6);
-  }
-</style>
-
-  .glass{
-    background:rgba(0,0,0,.65);   /* escuro no container */
-    border:1px solid var(--border);
-    box-shadow:0 0 20px rgba(0,0,0,.7), 0 0 20px rgba(21,255,149,.15) inset;
-    border-radius:24px;
-  }
-
-  .hero{
-    font-family:"Orbitron",sans-serif;
-    font-weight:900;
-    letter-spacing:.06em;
-    text-shadow:
-      0 0 8px rgba(21,255,149,.8),
-      0 0 16px rgba(21,255,149,.5),
-      0 0 24px rgba(21,255,149,.3);
-    color:#15ff95;
-  }
-
-  h3{
-    color:#15ff95;
-    text-shadow:0 0 6px rgba(21,255,149,.7);
-  }
-
-  .btn{
-    background:linear-gradient(90deg,var(--neon),var(--neon2));
-    color:#032818;
-    border-radius:18px;
-    font-weight:900;
-    letter-spacing:.08em;
-    box-shadow:0 0 50px rgba(21,255,149,.55), inset 0 0 15px rgba(0,0,0,.8);
-    transition:transform .12s,filter .12s;
-  }
-  .btn:hover{
-    filter:brightness(1.1);
-    transform:translateY(-2px);
-  }
-</style>
-
-
-<!-- Pixel (protegido) -->
-<script>
-  try{
-    !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-    n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
-    n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
-    t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
-    (function(){const q=new URLSearchParams(location.search);const PIXEL=q.get('pixel')||'REPLACE_WITH_PIXEL_ID';fbq('init',PIXEL);fbq('track','PageView')})();
-  }catch(e){}
-</script>
+    #scoreboard{
+      position:fixed;
+      top:10px;left:10px;
+      background:rgba(0,0,0,.6);
+      border:1px solid rgba(21,255,149,.4);
+      border-radius:10px;
+      padding:6px 12px;
+      font-size:14px;
+      color:var(--neon);
+      text-shadow:0 0 6px rgba(21,255,149,.7);
+    }
+  </style>
 </head>
 <body>
-<!-- Canvas da “chuva” Matrix -->
-<canvas id="matrix" style="position:fixed;inset:0;z-index:-1;"></canvas>
+  <canvas id="matrix"></canvas>
 
-<!-- HUD -->
-<header class="sticky top-0 z-30 backdrop-blur bg-black/60 border-b border-white/10">
-  <div class="max-w-xl mx-auto px-4 py-3 flex items-center justify-between">
-    <div class="hud-pill px-3 py-1 text-xs">IA BLACK • PROTOCOLO</div>
-    <div class="hud-pill px-3 py-1 text-xs flex items-center gap-2">
-      <span id="xpHud">0 XP</span><span class="opacity-50">|</span><span id="lvlHud">LVL 1</span>
-    </div>
-  </div>
-</header>
+  <div id="scoreboard">XP: <span id="xp">0</span> | LVL 1</div>
 
-<!-- Badge XP flutuante -->
-<div id="xpFloat" class="xp-float">+50 XP</div>
+  <main class="max-w-2xl mx-auto px-4 py-16">
+    <!-- Tela inicial -->
+    <section id="intro" class="glass text-center">
+      <h1 class="text-3xl md:text-4xl font-black mb-4">INICIANDO PROTOCOLO BLACK...</h1>
+      <p class="mb-6">Sistema carregado. Pressione para continuar.</p>
+      <button id="startBtn" class="btn">Iniciar Protocolo</button>
+    </section>
 
-<main class="max-w-xl mx-auto px-4 py-8">
-  <!-- TELA 1 — Protocolo -->
-  <section id="protocolo" class="glass p-6 md:p-10">
-    <div class="text-center space-y-6">
-      <div class="hud-pill inline-block px-3 py-1 text-[11px]">SISTEMA ONLINE</div>
-      <h1 class="hero text-3xl sm:text-4xl md:text-5xl leading-tight">INICIANDO PROTOCOLO<br>BLACK…</h1>
-      <div class="ghost p-4 text-[15px] sm:text-base">Sistema carregado. Pressione para continuar.</div>
-      <button class="btn w-full py-4 text-lg" onclick="iniciarProtocolo()">INICIAR PROTOCOLO</button>
-    </div>
-  </section>
+    <!-- Quiz -->
+    <form id="quiz" class="hidden mt-8 space-y-6"></form>
 
-  <!-- QUIZ -->
-  <form id="quiz" class="hidden mt-6 space-y-6">
-    <div class="glass p-6">
-      <div class="flex items-center justify-between mb-4">
-        <span class="hud-pill px-3 py-1 text-[11px]">DIAGNÓSTICO • <b id="stepLabel">1/5</b></span>
-      </div>
-      <div class="bar mb-5"><i id="bar"></i></div>
+    <!-- Lead final -->
+    <section id="lead" class="hidden glass mt-6">
+      <h2 class="text-xl font-bold">Quase lá! Pra liberar seu acesso 👇</h2>
+      <input id="nome" class="w-full rounded-xl bg-white/5 border border-white/10 px-4 py-3 mt-3" placeholder="Seu nome (opcional)">
+      <input id="whats" class="w-full rounded-xl bg-white/5 border border-white/10 px-4 py-3 mt-3" placeholder="Seu WhatsApp (opcional)">
+      <button id="finishBtn" class="btn mt-4 w-full">Liberar Acesso</button>
+    </section>
+  </main>
 
-      <!-- perguntas -->
-      <div id="q1" class="space-y-3">
-        <h3 class="text-emerald-300">Qual seu principal objetivo agora?</h3>
-        <div class="grid gap-3">
-          <button type="button" class="ghost px-4 py-3" onclick="choose('objetivo','Renda extra imediata')">Renda extra imediata</button>
-          <button type="button" class="ghost px-4 py-3" onclick="choose('objetivo','Estruturar vendas no sigilo')">Estruturar vendas no sigilo</button>
-          <button type="button" class="ghost px-4 py-3" onclick="choose('objetivo','Validar um produto')">Validar um produto</button>
-          <button type="button" class="ghost px-4 py-3" onclick="choose('objetivo','Escalar o que já vende')">Escalar o que já vende</button>
-        </div>
-      </div>
+  <footer class="py-8 text-center text-sm text-white/50">© <span id="year"></span> IA Black</footer>
 
-      <div id="q2" class="space-y-3 hidden">
-        <h3 class="text-emerald-300">Seu nível hoje?</h3>
-        <div class="grid gap-3">
-          <button type="button" class="ghost px-4 py-3" onclick="choose('experiencia','Iniciante')">Iniciante</button>
-          <button type="button" class="ghost px-4 py-3" onclick="choose('experiencia','Intermediário')">Intermediário</button>
-          <button type="button" class="ghost px-4 py-3" onclick="choose('experiencia','Avançado')">Avançado</button>
-        </div>
-      </div>
-
-      <div id="q3" class="space-y-3 hidden">
-        <h3 class="text-emerald-300">Quanto tempo por dia você tem?</h3>
-        <div class="grid gap-3">
-          <button type="button" class="ghost px-4 py-3" onclick="choose('tempo','< 1h')">&lt; 1h</button>
-          <button type="button" class="ghost px-4 py-3" onclick="choose('tempo','1–2h')">1–2h</button>
-          <button type="button" class="ghost px-4 py-3" onclick="choose('tempo','3h+')">3h+</button>
-        </div>
-      </div>
-
-      <div id="q4" class="space-y-3 hidden">
-        <h3 class="text-emerald-300">Quer aparecer nos conteúdos?</h3>
-        <div class="grid gap-3">
-          <button type="button" class="ghost px-4 py-3" onclick="choose('exposicao','Não, zero exposição')">Não, zero exposição</button>
-          <button type="button" class="ghost px-4 py-3" onclick="choose('exposicao','Talvez, pouco')">Talvez, pouco</button>
-          <button type="button" class="ghost px-4 py-3" onclick="choose('exposicao','Sim, sem problemas')">Sim, sem problemas</button>
-        </div>
-      </div>
-
-      <div id="q5" class="space-y-3 hidden">
-        <h3 class="text-emerald-300">Qual orçamento para iniciar?</h3>
-        <div class="grid gap-3">
-          <button type="button" class="ghost px-4 py-3" onclick="choose('orcamento','R$0 a R$10/dia')">R$0 a R$10/dia</button>
-          <button type="button" class="ghost px-4 py-3" onclick="choose('orcamento','R$10 a R$30/dia')">R$10 a R$30/dia</button>
-          <button type="button" class="ghost px-4 py-3" onclick="choose('orcamento','R$30+/dia')">R$30+/dia</button>
-        </div>
-      </div>
-
-      <div class="mt-4 flex justify-between text-xs text-white/60">
-        <button type="button" class="underline" onclick="prev()">Voltar</button>
-        <button type="button" class="underline" onclick="skip()">Pular</button>
-      </div>
-    </div>
-  </form>
-
-  <!-- LEAD -->
-  <section id="lead" class="hidden mt-6 glass p-6 space-y-4">
-    <h3 class="font-bold">Quase lá! Libere seu acesso 👇</h3>
-    <div class="grid sm:grid-cols-2 gap-3">
-      <input id="nome" class="w-full rounded-xl bg-black/40 border border-white/10 px-4 py-3" placeholder="Seu nome (opcional)">
-      <input id="whats" class="w-full rounded-xl bg-black/40 border border-white/10 px-4 py-3" placeholder="Seu WhatsApp (opcional)">
-    </div>
-    <button class="btn w-full py-4 text-lg" onclick="finalizar()">CONTINUAR</button>
-    <p class="text-[11px] text-white/50">Ao continuar, você concorda com a política de privacidade.</p>
-  </section>
-</main>
-
-<footer class="py-10 text-center text-[11px] text-white/40">© <span id="year"></span> IA Black</footer>
-
-<script>
-/* ====== Config ====== */
-const DESTINO_CHECKOUT='https://go.pepperpay.com.br/hb90b';
-const params=new URLSearchParams(location.search);
-const keepParams=['utm_source','utm_medium','utm_campaign','utm_content','utm_term','utm_id','fbclid'];
-
-/* ====== XP / Level ====== */
-let XP=0, LVL=1;
-const XP_PER_LEVEL=200;     // mude aqui se quiser upar mais rápido
-const XP_ON_START=100;      // +100 ao iniciar protocolo
-const XP_PER_ANSWER=50;     // +50 por resposta
-function addXP(qty){
-  XP+=qty;
-  // level up
-  const newLvl=Math.max(1, Math.floor(XP/XP_PER_LEVEL)+1);
-  if(newLvl!==LVL){ LVL=newLvl; }
-  // HUD
-  document.getElementById('xpHud').textContent=`${XP} XP`;
-  document.getElementById('lvlHud').textContent=`LVL ${LVL}`;
-  // badge flutuante
-  const b=document.getElementById('xpFloat');
-  b.textContent=`+${qty} XP`;
-  b.classList.add('show');
-  setTimeout(()=>b.classList.remove('show'), 900);
-}
-
-/* ====== Áudio ====== */
-let AC; function ensureAudio(){ if(!AC){ const C=window.AudioContext||window.webkitAudioContext; if(C){ AC=new C(); } } }
-function beep(f=720,d=0.1){ try{ if(!AC) return; const t=AC.currentTime,o=AC.createOscillator(),g=AC.createGain(); o.type='square'; o.frequency.setValueAtTime(f,t); g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(0.06,t+0.01); g.gain.exponentialRampToValueAtTime(0.0001,t+d); o.connect(g).connect(AC.destination); o.start(t); o.stop(t+d);}catch(e){} }
-document.addEventListener('pointerdown',()=>{ensureAudio()},{once:true});
-
-/* ====== Matrix Rain ====== */
-(function matrix(){
-  const c=document.getElementById('matrix'), ctx=c.getContext('2d');
-  function size(){ c.width=innerWidth; c.height=innerHeight; cols=Math.floor(c.width/14); drops=Array(cols).fill(1); }
-  let cols=0, drops=[];
-  const chars='アカサタナハマヤラワ0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-  function draw(){
-    ctx.fillStyle='rgba(0,0,0,0.08)'; ctx.fillRect(0,0,c.width,c.height);
-    ctx.fillStyle='#15ff95'; ctx.font='14px monospace';
-    for(let i=0;i<drops.length;i++){
-      const text=chars[Math.floor(Math.random()*chars.length)];
-      ctx.fillText(text, i*14, drops[i]*16);
-      if(drops[i]*16>c.height && Math.random()>0.975){ drops[i]=0; }
-      drops[i]++;
+  <script>
+    // ===== Fundo Matrix =====
+    const canvas=document.getElementById("matrix");
+    const ctx=canvas.getContext("2d");
+    canvas.height=window.innerHeight;canvas.width=window.innerWidth;
+    const letters="アァイィウヴエェオカガキギクグケゲコゴサザシジスズセゼソゾタダチヂッツヅテデトドナニヌネノハバヒビフブヘベホボマミムメモヤユヨラリルレロワンABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    const fontSize=14;const columns=canvas.width/fontSize;const drops=[];
+    for(let x=0;x<columns;x++)drops[x]=1;
+    function draw(){
+      ctx.fillStyle="rgba(0,0,0,0.05)";
+      ctx.fillRect(0,0,canvas.width,canvas.height);
+      ctx.fillStyle="#0F0";ctx.font=fontSize+"px monospace";
+      for(let i=0;i<drops.length;i++){
+        const text=letters.charAt(Math.floor(Math.random()*letters.length));
+        ctx.fillText(text,i*fontSize,drops[i]*fontSize);
+        if(drops[i]*fontSize>canvas.height&&Math.random()>0.975)drops[i]=0;
+        drops[i]++;
+      }
     }
-    requestAnimationFrame(draw);
-  }
-  addEventListener('resize', size); size(); draw();
-})();
+    setInterval(draw,33);
 
-/* ====== Quiz Fluxo ====== */
-const answers={}; let step=1; const total=5;
-const $=s=>document.querySelector(s);
-const slug=t=>(t||'').normalize('NFD').replace(/[^\w\s-]/g,'').trim().replace(/\s+/g,'-').toLowerCase();
-function setProgress(){ $('#stepLabel').textContent=`${Math.min(step,total)}/${total}`; $('#bar').style.width=`${Math.round((step-1)/total*100)}%`; }
-function show(id){ ['q1','q2','q3','q4','q5'].forEach(i=>$('#'+i).classList.add('hidden')); if(id) $('#'+id).classList.remove('hidden'); }
+    // ===== Quiz =====
+    const DESTINO_CHECKOUT='https://go.pepperpay.com.br/hb90b';
+    const QUESTIONS=[
+      {id:'objetivo',q:'Qual seu principal objetivo agora?',a:['Renda extra imediata','Estruturar vendas no sigilo','Validar um produto','Escalar o que já vende']},
+      {id:'experiencia',q:'Seu nível hoje?',a:['Iniciante','Intermediário','Avançado']},
+      {id:'tempo',q:'Quanto tempo por dia você tem?',a:['< 1h','1–2h','3h+']},
+      {id:'exposicao',q:'Quer aparecer nos conteúdos?',a:['Não, zero exposição','Talvez, pouco','Sim, sem problemas']},
+      {id:'orcamento',q:'Qual orçamento para iniciar?',a:['R$0 a R$10/dia','R$10 a R$30/dia','R$30+/dia']}
+    ];
 
-function iniciarProtocolo(){
-  addXP(XP_ON_START); beep(840,0.1);
-  document.getElementById('protocolo').classList.add('hidden');
-  document.getElementById('quiz').classList.remove('hidden');
-  step=1; show('q1'); setProgress();
-  try{ fbq('trackCustom','StartProtocol'); }catch(e){}
-}
+    let step=0,answers={},xp=0;
+    const $=s=>document.querySelector(s);
+    const $$=s=>document.querySelectorAll(s);
 
-function choose(key,val){
-  answers[key]=val; addXP(XP_PER_ANSWER); beep(700,0.09);
-  try{ fbq('trackCustom','AnswerQuestion',{id:key,answer:val}); }catch(e){}
-  next();
-}
-function next(){ step++; if(step>total){ $('#quiz').classList.add('hidden'); $('#lead').classList.remove('hidden'); $('#nome').focus(); return; } show('q'+step); setProgress(); }
-function prev(){ if(step>1){ step--; show('q'+step); setProgress(); beep(520,0.06); } }
-function skip(){ next(); beep(520,0.06); }
+    function updateXP(v){
+      xp+=v;$('#xp').textContent=xp;
+    }
 
-function finalizar(){
-  beep(900,0.12);
-  const url=new URL(DESTINO_CHECKOUT);
-  keepParams.forEach(k=>{ if(params.get(k)) url.searchParams.set(k, params.get(k)); });
-  const nome=$('#nome').value.trim(), whats=$('#whats').value.trim();
-  if(nome) url.searchParams.set('q_nome', slug(nome));
-  if(whats) url.searchParams.set('q_whats', slug(whats));
-  Object.entries(answers).forEach(([k,v])=> url.searchParams.set('q_'+slug(k), slug(v)));
-  url.searchParams.set('xp', XP); url.searchParams.set('lvl', LVL);
-  try{ fbq('track','Lead'); fbq('trackCustom','SubmitQuiz',{answers,XP,LVL}); }catch(e){}
-  location.href=url.toString();
-}
+    function renderQuestion(i){
+      const q=QUESTIONS[i];
+      const wrap=document.createElement('section');
+      wrap.className='glass';
+      wrap.innerHTML=`
+        <h3 class="text-lg font-semibold mb-4">${q.q}</h3>
+        <div class="grid gap-3">
+          ${q.a.map(opt=>`<button type="button" data-a="${opt}" class="answer">${opt}</button>`).join('')}
+        </div>
+        <div class="flex justify-between text-sm text-white/60 mt-4">
+          <button type="button" class="prev ${i===0?'opacity-30 pointer-events-none':''}">Voltar</button>
+          <button type="button" class="skip">Pular</button>
+        </div>`;
+      return wrap;
+    }
 
-/* ====== Rodapé ====== */
-document.getElementById('year').textContent=new Date().getFullYear();
-</script>
+    function renderQuiz(){
+      const form=$('#quiz');
+      form.innerHTML='';
+      QUESTIONS.forEach((_,i)=> form.appendChild(renderQuestion(i)) );
+      form.classList.remove('hidden');
+      $('#lead').classList.add('hidden');
+      showStep(0);
+    }
+
+    function showStep(i){
+      step=i;
+      $$('#quiz > section').forEach((el,idx)=> el.classList.toggle('hidden',idx!==i));
+      if(i>=QUESTIONS.length){ $('#quiz').classList.add('hidden'); $('#lead').classList.remove('hidden'); $('#nome').focus(); }
+    }
+
+    function next(){ showStep(step+1);}
+    function prev(){ if(step>0) showStep(step-1);}
+
+    function finalizar(){
+      const nome=$('#nome').value.trim();
+      const whats=$('#whats').value.trim();
+      const data={nome,whats,...answers};
+      let url=new URL(DESTINO_CHECKOUT);
+      Object.entries(data).forEach(([k,v])=>{if(v)url.searchParams.set(k,v);});
+      location.href=url.toString();
+    }
+
+    $('#startBtn').addEventListener('click',()=>{
+      $('#intro').classList.add('hidden');renderQuiz();
+    });
+
+    document.addEventListener('click',e=>{
+      const a=e.target.closest('.answer');
+      if(a){
+        const cur=QUESTIONS[step];
+        answers[cur.id]=a.dataset.a;
+        updateXP(50); // cada resposta dá 50 XP
+        next();
+      }
+      if(e.target.matches('.skip')){next();}
+      if(e.target.matches('.prev')){prev();}
+      if(e.target.matches('#finishBtn')){finalizar();}
+    });
+
+    document.getElementById('year').textContent=new Date().getFullYear();
+
+    // ===== Som clique =====
+    let AC;function unlockAudio(){if(!AC){const C=window.AudioContext||window.webkitAudioContext;if(C){AC=new C();}}}
+    function sfxClick(){if(!AC)return;const t=AC.currentTime;const o=AC.createOscillator();const g=AC.createGain();o.type='square';o.frequency.setValueAtTime(700,t);g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(0.06,t+0.01);g.gain.exponentialRampToValueAtTime(0.0001,t+0.09);o.connect(g).connect(AC.destination);o.start(t);o.stop(t+0.1);}
+    document.addEventListener('click',(e)=>{if(!AC)unlockAudio();if(e.target.closest('button'))sfxClick();},true);
+  </script>
 </body>
+</html>
+
 </html>
