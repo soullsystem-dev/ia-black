@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>IA Black — Quiz Rápido</title>
+  <meta name="description" content="Quiz rápido em uma única página, estático, pronto para Vercel. Preserva UTMs, dispara Pixel e redireciona ao checkout com as respostas." />
+  <link rel="icon" href="/favicon.ico" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root { --brand: #06f49c; --brand-2:#07b67a; }
+    .btn { background:linear-gradient(90deg,var(--brand),var(--brand-2)); }
+    .card { background: rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.10); }
+  </style>
+  <!-- Meta Pixel básico: passar ?pixel=ID na URL, ou troque REPLACE_WITH_PIXEL_ID abaixo -->
+  <script>
+    !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod? n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n; n.push=n; n.loaded=!0;n.version='2.0';n.queue=[]; t=b.createElement(e);t.async=!0; t.src=v; s=b.getElementsByTagName(e)[0]; s.parentNode.insertBefore(t,s)}(window, document,'script','https://connect.facebook.net/en_US/fbevents.js');
+    (function(){ const q=new URLSearchParams(location.search); const PIXEL=q.get('pixel')||'REPLACE_WITH_PIXEL_ID'; fbq('init', PIXEL); fbq('track','PageView'); })();
+  </script>
+</head>
+<body class="bg-black text-white min-h-screen">
+  <header class="sticky top-0 z-30 backdrop-blur bg-black/60 border-b border-white/10">
+    <div class="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <div class="h-6 w-6 rounded-md" style="background:radial-gradient(circle at 30% 30%, var(--brand), transparent 60%), #0b0b0b"></div>
+        <span class="text-sm tracking-wide">IA Black • Quiz</span>
+      </div>
+      <div id="progress" class="text-xs text-white/70"></div>
+    </div>
+  </header>
+
+  <main class="max-w-4xl mx-auto px-4 py-8">
+    <section id="intro" class="card rounded-2xl p-6">
+      <h1 class="text-2xl md:text-3xl font-black">Descubra seu caminho para faturar no sigilo</h1>
+      <p class="text-white/70 mt-2">Responda 5 perguntas rápidas. No final, liberamos o acesso ao mecanismo ideal para você. *Leva menos de 60 segundos.*</p>
+      <button id=\"startBtn\" class=\"btn px-5 py-3 rounded-xl font-semibold text-black mt-5 sfx\">Começar agora<\/button>
+      <p class="text-[11px] text-white/40 mt-3">As UTMs da campanha serão preservadas até o checkout.</p>
+    </section>
+
+    <form id="quiz" class="hidden mt-6 space-y-6">
+      <!-- Pergunta template (clonada via JS) -->
+    </form>
+
+    <section id="lead" class="hidden mt-6 card rounded-2xl p-6">
+      <h2 class="text-xl font-bold">Quase lá! Pra liberar seu acesso 👇</h2>
+      <div class="grid md:grid-cols-2 gap-3 mt-3">
+        <input id="nome" class="w-full rounded-xl bg-white/5 border border-white/10 px-4 py-3" placeholder="Seu nome (opcional)">
+        <input id="whats" class="w-full rounded-xl bg-white/5 border border-white/10 px-4 py-3" placeholder="Seu WhatsApp (opcional)">
+      </div>
+      <button id=\"finishBtn\" class=\"btn px-5 py-3 rounded-xl font-bold text-black mt-4 sfx\">Liberar acesso<\/button>
+      <p class="text-[11px] text-white/40 mt-2">Ao continuar, você concorda com nossa política de privacidade.</p>
+    </section>
+  </main>
+
+  <footer class="border-t border-white/10 py-10 text-center text-sm text-white/50">© <span id="year"></span> IA Black</footer>
+
+  <script>
+    // ===== Configurações rápidas =====
+    const DESTINO_CHECKOUT = 'https://go.pepperpay.com.br/hb90b'; // seu checkout
+    const QUESTIONS = [
+      { id:'objetivo', q:'Qual seu principal objetivo agora?', a:['Renda extra imediata','Estruturar vendas no sigilo','Validar um produto','Escalar o que já vende'] },
+      { id:'experiencia', q:'Seu nível hoje?', a:['Iniciante','Intermediário','Avançado'] },
+      { id:'tempo', q:'Quanto tempo por dia você tem?', a:['< 1h','1–2h','3h+'] },
+      { id:'exposicao', q:'Quer aparecer nos conteúdos?', a:['Não, zero exposição','Talvez, pouco','Sim, sem problemas'] },
+      { id:'orcamento', q:'Qual orçamento para iniciar?', a:['R$0 a R$10/dia','R$10 a R$30/dia','R$30+/dia'] }
+    ];
+
+    // ===== Estado =====
+    const params = new URLSearchParams(location.search);
+    const keepParams = ['utm_source','utm_medium','utm_campaign','utm_content','utm_term','utm_id','fbclid'];
+    const answers = {}; let step = 0;
+
+    // ===== Util =====
+    const $ = s=>document.querySelector(s); const $$ = s=>document.querySelectorAll(s);
+    const progress = ()=> $('#progress').textContent = `Etapa ${Math.min(step,QUESTIONS.length)}/${QUESTIONS.length}`;
+    const toSlug = t=> t.normalize('NFD').replace(/[^\w\s-]/g,'').trim().replace(/\s+/g,'-').toLowerCase();
+
+    // ===== Render perguntas =====
+    function renderQuestion(i){
+      const q = QUESTIONS[i];
+      const wrap = document.createElement('section');
+      wrap.className = 'card rounded-2xl p-6';
+      wrap.dataset.step = i;
+      wrap.innerHTML = `
+        <h3 class="text-lg font-semibold">${i+1}. ${q.q}</h3>
+        <div class="mt-4 grid sm:grid-cols-2 gap-3">
+          ${q.a.map(opt=>`<button type="button" data-a="${opt}" class=\"answer sfx btn\/ghost px-4 py-3 rounded-xl border border-white/10 hover:border-white/30 text-left">${opt}</button>`).join('')}
+        </div>
+        <div class="mt-4 flex justify-between text-sm text-white/60">
+          <button type="button" class="prev underline ${i===0?'opacity-30 pointer-events-none':''}">Voltar</button>
+          <button type="button" class="skip underline">Pular</button>
+        </div>`;
+      return wrap;
+    }
+
+    function renderQuiz(){
+      const form = $('#quiz');
+      form.innerHTML='';
+      QUESTIONS.forEach((_,i)=> form.appendChild(renderQuestion(i)) );
+      form.classList.remove('hidden');
+      $('#lead').classList.add('hidden');
+      progress();
+      fbq('trackCustom','StartQuiz');
+    }
+
+    function showStep(i){
+      step = i; progress();
+      $$('#quiz > section').forEach((el,idx)=> el.classList.toggle('hidden', idx!==i));
+      if(i>=QUESTIONS.length){ $('#quiz').classList.add('hidden'); $('#lead').classList.remove('hidden'); $('#nome').focus(); }
+    }
+
+    function next(){ showStep(step+1); }
+    function prev(){ if(step>0) showStep(step-1); }
+
+    // ===== CTA final =====
+    function finalizar(){
+      const nome = $('#nome').value.trim();
+      const whats = $('#whats').value.trim();
+      const data = {nome,whats,...answers};
+      const url = new URL(DESTINO_CHECKOUT);
+      // anexar UTMs originais
+      keepParams.forEach(k=>{ if(params.get(k)) url.searchParams.set(k, params.get(k)); });
+      // anexar quiz na URL (compacto)
+      Object.entries(data).forEach(([k,v])=>{ if(v) url.searchParams.set('q_'+toSlug(k), toSlug(String(v))); });
+      fbq('track','Lead');
+      fbq('trackCustom','SubmitQuiz', data);
+      location.href = url.toString();
+    }
+
+    // ===== Eventos =====
+    $('#startBtn').addEventListener('click', ()=>{ unlockAudio(); sfxClick(); $('#intro').classList.add('hidden'); renderQuiz(); showStep(0); });
+
+    document.addEventListener('click', e=>{
+      const a = e.target.closest('.answer');
+      if(a){
+        const cur = QUESTIONS[step];
+        answers[cur.id] = a.dataset.a;
+        fbq('trackCustom','AnswerQuestion', {id:cur.id, answer:a.dataset.a});
+        next();
+      }
+      if(e.target.matches('.skip')){ next(); }
+      if(e.target.matches('.prev')){ prev(); }
+      if(e.target.matches('#finishBtn')){ finalizar(); }
+    });
+
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // ===== SFX (som de clique) =====
+    let AC; function unlockAudio(){ if(!AC){ const C = window.AudioContext||window.webkitAudioContext; if(C){ AC = new C(); } } }
+    function sfxClick(){ if(!AC) return; const t = AC.currentTime; const o = AC.createOscillator(); const g = AC.createGain(); o.type='square'; o.frequency.setValueAtTime(700,t); g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(0.06,t+0.01); g.gain.exponentialRampToValueAtTime(0.0001,t+0.09); o.connect(g).connect(AC.destination); o.start(t); o.stop(t+0.1); }
+    // toca para qualquer botão com classe .sfx
+    document.addEventListener('click', (e)=>{ if(e.target.closest('.sfx')) sfxClick(); }, true);
+  </script>
+</body>
+</html>
