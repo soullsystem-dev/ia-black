@@ -14,18 +14,24 @@
 <style>
  <style>
   /* já tinha, só adicionei ajustes */
-  .ghost{
-    background:rgba(0,0,0,.75);   /* ESCURECI mais */
-    border:1px solid var(--border);
-    border-radius:14px;
-    text-align:left;
-    color:#eafff4;
-    text-shadow:0 0 6px rgba(21,255,149,.6),0 0 12px rgba(21,255,149,.4); /* glow */
-  }
-  .ghost:hover{
-    background:rgba(0,0,0,.85);
-    border-color:var(--neon2);
-  }
+  ./* opções do quiz */
+.ghost{
+  background:#15ff95;        /* verde neon sólido */
+  border:1px solid #00cc66;  /* borda verde mais escura */
+  border-radius:14px;
+  text-align:left;
+  color:#000;                /* texto preto forte */
+  font-weight:700;
+  text-shadow:0 0 6px rgba(0,0,0,.6); /* sombra no texto p/ contraste */
+  box-shadow:0 0 18px rgba(21,255,149,.6);
+}
+
+.ghost:hover{
+  background:#00e680;        /* verde neon mais forte */
+  border-color:#00ff99;
+  box-shadow:0 0 25px rgba(21,255,149,.9);
+}
+
 
   .glass{
     background:rgba(0,0,0,.65);   /* escuro no container */
