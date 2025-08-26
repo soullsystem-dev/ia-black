@@ -5,11 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <title>Sistema Oculto – Acesso Sigiloso</title>
-  <meta name="description" content="Um sistema oculto que fatura todos os dias no automático — sem aparecer.">
-  <meta name="theme-color" content="#ff2ea6">
+  <meta name="description" content="Um sistema oculto que fatura todos os dias no automático — sem aparecer." />
+  <meta name="theme-color" content="#ff2ea6" />
 
   <!-- Fonte -->
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet" />
 
   <!-- Meta Pixel Code -->
   <script>
@@ -21,7 +21,7 @@
     t.src=v;s=b.getElementsByTagName(e)[0];
     s.parentNode.insertBefore(t,s)}(window, document,'script',
     'https://connect.facebook.net/en_US/fbevents.js');
-    fbq('init', '664309226562112'); 
+    fbq('init', '664309226562112');
     fbq('track', 'PageView');
   </script>
   <!-- End Meta Pixel Code -->
@@ -53,7 +53,7 @@
     }
     .content{width:100%;max-width:700px;z-index:1;position:relative}
 
-    /* Fundo código hacker */
+    /* Fundo: códigos hacker neon */
     #matrixCanvas{
       position:fixed;
       inset:0;
@@ -103,7 +103,7 @@
       background:rgba(255,255,255,.06);
       box-shadow:0 0 16px var(--accent-soft);
     }
-    .slots span.value{
+    .slots .value{
       background:var(--accent);
       color:var(--on-accent);
       padding:6px 14px;
@@ -119,19 +119,20 @@
   <!-- Meta Pixel (noscript) -->
   <noscript>
     <img height="1" width="1" style="display:none"
-         src="https://www.facebook.com/tr?id=664309226562112&ev=PageView&noscript=1"/>
+         src="https://www.facebook.com/tr?id=664309226562112&ev=PageView&noscript=1" />
   </noscript>
 
+  <!-- Fundo: códigos hacker -->
   <canvas id="matrixCanvas"></canvas>
 
   <div class="wrap">
     <div class="content">
       <!-- Print -->
       <div class="proof-img">
-        <img src="print-painel.jpg" alt="Comprovante real do painel">
+        <img src="print-painel.jpg" alt="Comprovante real do painel" />
       </div>
       <div class="proof-caption">
-        Resultado real do meu painel — Saldo total R$ 28.736,75 • Disponível R$ 19.210,87 • Vendas hoje R$ 1.584,37 • Ontem R$ 1.897,28.<br>
+        Resultado real do meu painel — Saldo total R$ 28.736,75 • Disponível R$ 19.210,87 • Vendas hoje R$ 1.584,37 • Ontem R$ 1.897,28.<br />
         <em>Resultados variam conforme aplicação.</em>
       </div>
 
@@ -140,10 +141,12 @@
       <p class="subtitle">Receba agora o acesso exclusivo direto no WhatsApp.</p>
 
       <!-- CTA -->
-      <a href="https://wa.me/5547991473219?text=Oi%20Carina!%20T%C3%B4%20curiosa%20pra%20saber%20como%20esse%20m%C3%A9todo%20funciona%20na%20pr%C3%A1tica."
-         target="_blank" rel="noopener"
-         class="btn"
-         onclick="fbq('track', 'Lead');">
+      <a
+        href="https://wa.me/5547991473219?text=Oi%20Carina!%20T%C3%B4%20curiosa%20pra%20saber%20como%20esse%20m%C3%A9todo%20funciona%20na%20pr%C3%A1tica."
+        target="_blank" rel="noopener"
+        class="btn"
+        onclick="fbq && fbq('track','Lead');"
+      >
         QUERO ATIVAR MEU SISTEMA AGORA
       </a>
 
@@ -157,54 +160,104 @@
   </div>
 
   <script>
-    // CONTADOR DE VAGAS
-    let slots = localStorage.getItem("slotsValue");
-    slots = slots ? parseInt(slots) : 20;
-    const el = document.getElementById("slots-value");
-    el.textContent = slots;
+    /* ===== CONTADOR DE VAGAS (rápido) ===== */
+    const slotsEl = document.getElementById("slots-value");
+    const CTA = document.querySelector(".btn");
 
-    function decreaseSlots(){
-      if(slots > 0){
-        slots--;
-        localStorage.setItem("slotsValue", slots);
-        el.textContent = slots;
+    // inicia em 20 (ou recupera do navegador)
+    let slots = parseInt(localStorage.getItem("slotsValue") || "20", 10);
+
+    function renderSlots() {
+      if (slots < 0) slots = 0;
+      slotsEl.textContent = slots;
+
+      if (slots <= 0) {
+        CTA.textContent = "ENTRAR NA LISTA";
+        CTA.setAttribute("href",
+          "https://wa.me/5547991473219?text=" + encodeURIComponent(
+            "Oi, Carina! Vi que as vagas de hoje esgotaram. Quero entrar na lista de prioridade para a próxima liberação."
+          )
+        );
+        CTA.setAttribute("onclick", "fbq && fbq('track','Lead');");
+      } else if (slots <= 3) {
+        CTA.textContent = "ÚLTIMAS " + slots + " VAGAS — ATIVAR AGORA";
+      } else {
+        CTA.textContent = "QUERO ATIVAR MEU SISTEMA AGORA";
       }
     }
-    setInterval(()=>{ 
-      if(slots>0) decreaseSlots();
-    }, 25000 + Math.random()*20000); // a cada 25–45s
+    function saveSlots(){ localStorage.setItem("slotsValue", String(slots)); }
 
-    // MATRIX HACKER NEON
-    const canvas=document.getElementById("matrixCanvas");
-    const ctx=canvas.getContext("2d");
-    let W,H;
-    function resize(){W=canvas.width=window.innerWidth; H=canvas.height=window.innerHeight}
-    window.addEventListener("resize",resize); resize();
+    // queda de slots (4–10s; mais rápido no fim; 25% chance de cair 2)
+    function tickSlots(){
+      if (slots <= 0) return;
+      const drop = Math.random() < 0.25 ? 2 : 1;
+      slots = Math.max(0, slots - drop);
+      saveSlots();
+      renderSlots();
 
-    const letters="01ABCDEFGHIJKLMNOPQRSTUVWXYZ$#@&%";
-    const fontSize=16; 
-    const columns=Math.floor(W/fontSize);
-    const drops=Array(columns).fill(1);
+      let nextMin, nextMax;
+      if (slots > 10) { nextMin = 6000; nextMax = 10000; }     // 6–10s
+      else if (slots > 3){ nextMin = 4000; nextMax = 7000; }   // 4–7s
+      else if (slots > 0){ nextMin = 3000; nextMax = 5000; }   // 3–5s (pressão final)
+      else { return; }
+
+      const wait = nextMin + Math.random()*(nextMax - nextMin);
+      setTimeout(tickSlots, wait);
+    }
+
+    // reset diário opcional (comente a linha de slots=20 se não quiser reset)
+    (function resetDiario(){
+      const key = "slotsResetDate";
+      const hoje = new Date().toDateString();
+      const salvo = localStorage.getItem(key);
+      if (salvo !== hoje) {
+        // slots = 20; // <- descomente para resetar diariamente ao abrir a página
+        localStorage.setItem(key, hoje);
+        saveSlots();
+      }
+    })();
+
+    renderSlots();
+    setTimeout(tickSlots, 3000 + Math.random()*3000); // primeira queda rápida (3–6s)
+
+    /* ===== MATRIX HACKER NEON (fundo) ===== */
+    const canvas = document.getElementById("matrixCanvas");
+    const ctx = canvas.getContext("2d");
+    let W, H;
+    function resize(){ W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+    window.addEventListener("resize", resize); resize();
+
+    const letters = "01ABCDEFGHIJKLMNOPQRSTUVWXYZ$#@&%";
+    let fontSize = 16;
+    function columns(){ return Math.floor(W / fontSize); }
+    let drops = Array(columns()).fill(1);
 
     function draw(){
-      ctx.fillStyle="rgba(0,0,0,0.08)";
+      ctx.fillStyle = "rgba(0,0,0,0.08)";
       ctx.fillRect(0,0,W,H);
-      ctx.fillStyle="#ff2ea6"; // cor neon
-      ctx.shadowColor="#ff2ea6";
-      ctx.shadowBlur=10;
-      ctx.font=fontSize+"px monospace";
+
+      // variação sutil entre rosa e roxo para efeito neon
+      const grad = ctx.createLinearGradient(0,0,W,0);
+      grad.addColorStop(0, "#ff2ea6");
+      grad.addColorStop(1, "#b400ff");
+      ctx.fillStyle = grad;
+      ctx.shadowColor = "#ff2ea6";
+      ctx.shadowBlur = 10;
+      ctx.font = fontSize + "px monospace";
 
       for(let i=0;i<drops.length;i++){
-        const text=letters.charAt(Math.floor(Math.random()*letters.length));
-        const x=i*fontSize;
-        const y=drops[i]*fontSize;
-        ctx.fillText(text,x,y);
+        const text = letters.charAt(Math.floor(Math.random()*letters.length));
+        const x = i * fontSize;
+        const y = drops[i] * fontSize;
+        ctx.fillText(text, x, y);
 
-        if(y>H && Math.random()>0.975){ drops[i]=0; }
+        if (y > H && Math.random() > 0.975) drops[i] = 0;
         drops[i]++;
       }
       requestAnimationFrame(draw);
     }
+    // reconfigura colunas ao redimensionar
+    window.addEventListener("resize", () => { drops = Array(columns()).fill(1); });
     draw();
   </script>
 </body>
