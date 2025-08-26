@@ -3,64 +3,48 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>IA Black • Protocolo</title>
+  <title>IA Black – Protocolo</title>
+  <link rel="icon" href="/favicon.ico" />
+  <script src="https://cdn.tailwindcss.com"></script>
   <style>
     :root {
-      --neon:#15ff95;
-      --neon2:#07b67a;
+      --neon: #15ff95;
+      --neon2: #07b67a;
     }
     body {
       margin:0;
-      font-family: 'Orbitron', sans-serif;
-      background:black;
-      color:white;
+      background:#000;
+      color:#fff;
+      font-family: "Orbitron", sans-serif;
       overflow-x:hidden;
     }
 
-    /* Tela inteira fundo Matrix */
+    /* Fundo estilo Matrix */
     canvas#matrix {
       position:fixed;
       top:0;left:0;
       width:100%;height:100%;
       z-index:-1;
-      background:black;
+      background:#000;
     }
 
-    /* HUD XP e Level */
-    #hud {
-      position:fixed;
-      top:10px;left:50%;
-      transform:translateX(-50%);
-      display:flex;
-      gap:10px;
-      font-size:14px;
-      background:rgba(0,0,0,.6);
-      border:1px solid var(--neon2);
-      border-radius:8px;
-      padding:6px 14px;
-      color:var(--neon);
-      box-shadow:0 0 10px var(--neon);
+    /* Containers */
+    .glass {
+      background: rgba(0,0,0,.8);
+      border:1px solid rgba(21,255,149,.3);
+      border-radius: 20px;
+      padding: 20px;
+      box-shadow:0 0 20px rgba(0,0,0,.7), 0 0 25px rgba(21,255,149,.2) inset;
     }
 
-    /* Hero */
-    .hero {
-      text-align:center;
-      margin-top:20vh;
-    }
-    .hero h1 {
-      font-size:28px;
-      color:var(--neon);
-      text-shadow:0 0 8px var(--neon),0 0 20px rgba(21,255,149,.6);
-      margin-bottom:20px;
-    }
-    .hero p {
-      color:#ccc;
-      margin-bottom:25px;
+    h1,h2,h3 {
+      color: var(--neon);
+      text-shadow: 0 0 8px rgba(21,255,149,.8),0 0 16px rgba(21,255,149,.5);
     }
 
     /* Botão principal */
     .btn {
-      background: linear-gradient(90deg,var(--neon),var(--neon2));
+      background: var(--neon);
       color:#000;
       font-weight:900;
       border-radius:18px;
@@ -70,113 +54,175 @@
       text-shadow:0 0 4px rgba(0,0,0,.6);
       box-shadow:0 0 20px var(--neon),0 0 40px rgba(21,255,149,.5);
       transition:transform .15s, filter .15s;
-      border:none;
-      cursor:pointer;
     }
     .btn:hover {
       filter:brightness(1.15);
       transform:translateY(-2px);
     }
 
-    /* Perguntas */
-    .card {
-      margin:40px auto;
-      max-width:500px;
-      padding:20px;
-      border-radius:18px;
-      background:rgba(0,0,0,.65);
-      border:1px solid rgba(21,255,149,.2);
-      text-align:center;
-    }
-    .card h3 {
-      color:var(--neon);
-      text-shadow:0 0 6px var(--neon);
-      margin-bottom:20px;
-    }
-
     /* Opções do quiz */
     .answer {
-      background: rgba(21,255,149,0.75); /* VERDE NEON translúcido */
-      color:#000;                        /* Letras pretas */
-      font-weight:800;
+      background: var(--neon);
+      color:#fff;
+      font-weight:700;
       border-radius:14px;
       padding:14px;
-      margin:10px 0;
       text-align:center;
       box-shadow:0 0 12px var(--neon), inset 0 0 6px rgba(0,0,0,.6);
       transition:transform .15s, filter .15s;
-      cursor:pointer;
-      display:block;
     }
     .answer:hover {
       filter:brightness(1.2);
       transform:translateY(-2px);
+    }
+
+    #scoreboard{
+      position:fixed;
+      top:10px;left:10px;
+      background:rgba(0,0,0,.6);
+      border:1px solid rgba(21,255,149,.4);
+      border-radius:10px;
+      padding:6px 12px;
+      font-size:14px;
+      color:var(--neon);
+      text-shadow:0 0 6px rgba(21,255,149,.7);
     }
   </style>
 </head>
 <body>
   <canvas id="matrix"></canvas>
 
-  <div id="hud"> <span id="xp">0 XP</span> | <span id="lvl">LVL 1</span> </div>
+  <div id="scoreboard">XP: <span id="xp">0</span> | LVL 1</div>
 
-  <section id="intro" class="hero">
-    <h1>INICIANDO PROTOCOLO BLACK...</h1>
-    <p>Sistema carregado. Pressione para continuar.</p>
-    <button id="startBtn" class="btn">Iniciar Protocolo</button>
-  </section>
+  <main class="max-w-2xl mx-auto px-4 py-16">
+    <!-- Tela inicial -->
+    <section id="intro" class="glass text-center">
+      <h1 class="text-3xl md:text-4xl font-black mb-4">INICIANDO PROTOCOLO BLACK...</h1>
+      <p class="mb-6">Sistema carregado. Pressione para continuar.</p>
+      <button id="startBtn" class="btn">Iniciar Protocolo</button>
+    </section>
 
-  <form id="quiz" class="hidden">
-    <div class="card">
-      <h3>Qual seu principal objetivo agora?</h3>
-      <button type="button" class="answer">Renda extra imediata</button>
-      <button type="button" class="answer">Estruturar vendas no sigilo</button>
-      <button type="button" class="answer">Validar um produto</button>
-      <button type="button" class="answer">Escalar o que já vende</button>
-    </div>
-  </form>
+    <!-- Quiz -->
+    <form id="quiz" class="hidden mt-8 space-y-6"></form>
 
-<script>
-  // ===== Efeito Matrix =====
-  const canvas=document.getElementById("matrix");
-  const ctx=canvas.getContext("2d");
-  canvas.height=window.innerHeight; canvas.width=window.innerWidth;
-  const letters="アカサタナハマヤラワ0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
-  const font=14; const cols=canvas.width/font;
-  const drops=Array(cols).fill(1);
+    <!-- Lead final -->
+    <section id="lead" class="hidden glass mt-6">
+      <h2 class="text-xl font-bold">Quase lá! Pra liberar seu acesso 👇</h2>
+      <input id="nome" class="w-full rounded-xl bg-white/5 border border-white/10 px-4 py-3 mt-3" placeholder="Seu nome (opcional)">
+      <input id="whats" class="w-full rounded-xl bg-white/5 border border-white/10 px-4 py-3 mt-3" placeholder="Seu WhatsApp (opcional)">
+      <button id="finishBtn" class="btn mt-4 w-full">Liberar Acesso</button>
+    </section>
+  </main>
 
-  function draw(){
-    ctx.fillStyle="rgba(0,0,0,0.08)";
-    ctx.fillRect(0,0,canvas.width,canvas.height);
-    ctx.fillStyle="#0f0"; ctx.font=font+"px monospace";
-    for(let i=0;i<drops.length;i++){
-      const txt=letters[Math.floor(Math.random()*letters.length)];
-      ctx.fillText(txt,i*font,drops[i]*font);
-      if(drops[i]*font>canvas.height && Math.random()>0.975) drops[i]=0;
-      drops[i]++;
+  <footer class="py-8 text-center text-sm text-white/50">© <span id="year"></span> IA Black</footer>
+
+  <script>
+    // ===== Fundo Matrix =====
+    const canvas=document.getElementById("matrix");
+    const ctx=canvas.getContext("2d");
+    canvas.height=window.innerHeight;canvas.width=window.innerWidth;
+    const letters="アァイィウヴエェオカガキギクグケゲコゴサザシジスズセゼソゾタダチヂッツヅテデトドナニヌネノハバヒビフブヘベホボマミムメモヤユヨラリルレロワンABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    const fontSize=14;const columns=canvas.width/fontSize;const drops=[];
+    for(let x=0;x<columns;x++)drops[x]=1;
+    function draw(){
+      ctx.fillStyle="rgba(0,0,0,0.05)";
+      ctx.fillRect(0,0,canvas.width,canvas.height);
+      ctx.fillStyle="#0F0";ctx.font=fontSize+"px monospace";
+      for(let i=0;i<drops.length;i++){
+        const text=letters.charAt(Math.floor(Math.random()*letters.length));
+        ctx.fillText(text,i*fontSize,drops[i]*fontSize);
+        if(drops[i]*fontSize>canvas.height&&Math.random()>0.975)drops[i]=0;
+        drops[i]++;
+      }
     }
-  }
-  setInterval(draw,40);
+    setInterval(draw,33);
 
-  // ===== Game Logic =====
-  let xp=0, lvl=1;
-  function addXP(n){
-    xp+=n; if(xp>=lvl*100){ lvl++; }
-    document.getElementById("xp").textContent=xp+" XP";
-    document.getElementById("lvl").textContent="LVL "+lvl;
-  }
+    // ===== Quiz =====
+    const DESTINO_CHECKOUT='https://go.pepperpay.com.br/hb90b';
+    const QUESTIONS=[
+      {id:'objetivo',q:'Qual seu principal objetivo agora?',a:['Renda extra imediata','Estruturar vendas no sigilo','Validar um produto','Escalar o que já vende']},
+      {id:'experiencia',q:'Seu nível hoje?',a:['Iniciante','Intermediário','Avançado']},
+      {id:'tempo',q:'Quanto tempo por dia você tem?',a:['< 1h','1–2h','3h+']},
+      {id:'exposicao',q:'Quer aparecer nos conteúdos?',a:['Não, zero exposição','Talvez, pouco','Sim, sem problemas']},
+      {id:'orcamento',q:'Qual orçamento para iniciar?',a:['R$0 a R$10/dia','R$10 a R$30/dia','R$30+/dia']}
+    ];
 
-  document.getElementById("startBtn").addEventListener("click",()=>{
-    document.getElementById("intro").style.display="none";
-    document.getElementById("quiz").classList.remove("hidden");
-    addXP(100);
-  });
+    let step=0,answers={},xp=0;
+    const $=s=>document.querySelector(s);
+    const $$=s=>document.querySelectorAll(s);
 
-  document.querySelectorAll(".answer").forEach(btn=>{
-    btn.addEventListener("click",()=>{
-      addXP(50);
-      alert("Você escolheu: "+btn.textContent);
+    function updateXP(v){
+      xp+=v;$('#xp').textContent=xp;
+    }
+
+    function renderQuestion(i){
+      const q=QUESTIONS[i];
+      const wrap=document.createElement('section');
+      wrap.className='glass';
+      wrap.innerHTML=`
+        <h3 class="text-lg font-semibold mb-4">${q.q}</h3>
+        <div class="grid gap-3">
+          ${q.a.map(opt=>`<button type="button" data-a="${opt}" class="answer">${opt}</button>`).join('')}
+        </div>
+        <div class="flex justify-between text-sm text-white/60 mt-4">
+          <button type="button" class="prev ${i===0?'opacity-30 pointer-events-none':''}">Voltar</button>
+          <button type="button" class="skip">Pular</button>
+        </div>`;
+      return wrap;
+    }
+
+    function renderQuiz(){
+      const form=$('#quiz');
+      form.innerHTML='';
+      QUESTIONS.forEach((_,i)=> form.appendChild(renderQuestion(i)) );
+      form.classList.remove('hidden');
+      $('#lead').classList.add('hidden');
+      showStep(0);
+    }
+
+    function showStep(i){
+      step=i;
+      $$('#quiz > section').forEach((el,idx)=> el.classList.toggle('hidden',idx!==i));
+      if(i>=QUESTIONS.length){ $('#quiz').classList.add('hidden'); $('#lead').classList.remove('hidden'); $('#nome').focus(); }
+    }
+
+    function next(){ showStep(step+1);}
+    function prev(){ if(step>0) showStep(step-1);}
+
+    function finalizar(){
+      const nome=$('#nome').value.trim();
+      const whats=$('#whats').value.trim();
+      const data={nome,whats,...answers};
+      let url=new URL(DESTINO_CHECKOUT);
+      Object.entries(data).forEach(([k,v])=>{if(v)url.searchParams.set(k,v);});
+      location.href=url.toString();
+    }
+
+    $('#startBtn').addEventListener('click',()=>{
+      $('#intro').classList.add('hidden');renderQuiz();
     });
-  });
-</script>
+
+    document.addEventListener('click',e=>{
+      const a=e.target.closest('.answer');
+      if(a){
+        const cur=QUESTIONS[step];
+        answers[cur.id]=a.dataset.a;
+        updateXP(50); // cada resposta dá 50 XP
+        next();
+      }
+      if(e.target.matches('.skip')){next();}
+      if(e.target.matches('.prev')){prev();}
+      if(e.target.matches('#finishBtn')){finalizar();}
+    });
+
+    document.getElementById('year').textContent=new Date().getFullYear();
+
+    // ===== Som clique =====
+    let AC;function unlockAudio(){if(!AC){const C=window.AudioContext||window.webkitAudioContext;if(C){AC=new C();}}}
+    function sfxClick(){if(!AC)return;const t=AC.currentTime;const o=AC.createOscillator();const g=AC.createGain();o.type='square';o.frequency.setValueAtTime(700,t);g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(0.06,t+0.01);g.gain.exponentialRampToValueAtTime(0.0001,t+0.09);o.connect(g).connect(AC.destination);o.start(t);o.stop(t+0.1);}
+    document.addEventListener('click',(e)=>{if(!AC)unlockAudio();if(e.target.closest('button'))sfxClick();},true);
+  </script>
 </body>
+</html>
+
 </html>
