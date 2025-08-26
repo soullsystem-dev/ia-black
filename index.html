@@ -1,183 +1,49 @@
-<!doctype html>
-<html lang="pt-br">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>IA Black • Protocolo</title>
-  <style>
-    :root {
-      --neon:#15ff95;
-      --neon2:#07b67a;
-    }
-    body {
-      margin:0;
-      font-family: 'Orbitron', sans-serif;
-      background:black;
-      color:white;
-      overflow-x:hidden;
-    }
+/* --- HOTFIX VISUAL E COMPORTAMENTO (mínimo) --- */
 
-    /* Fundo Matrix */
-    canvas#matrix {
-      position:fixed;
-      top:0;left:0;
-      width:100%;height:100%;
-      z-index:-1;
-      background:black;
-    }
+/* garante que "hidden" realmente esconda */
+.hidden { display: none !important; }
 
-    /* HUD XP e Level */
-    #hud {
-      position:fixed;
-      top:10px;left:50%;
-      transform:translateX(-50%);
-      display:flex;
-      gap:10px;
-      font-size:14px;
-      background:rgba(0,0,0,.6);
-      border:1px solid var(--neon2);
-      border-radius:8px;
-      padding:6px 14px;
-      color:var(--neon);
-      box-shadow:0 0 10px var(--neon);
-    }
+/* menos glow no título/hero e mais respiro */
+.hero h1{
+  text-shadow: 0 0 8px rgba(21,255,149,.35), 0 0 16px rgba(21,255,149,.25) !important;
+  letter-spacing:.04em;
+}
+.hero { margin-top: 18vh; margin-bottom: 6vh; }
 
-    /* Tela inicial */
-    .hero {
-      text-align:center;
-      margin-top:20vh;
-    }
-    .hero h1 {
-      font-size:28px;
-      color:var(--neon);
-      text-shadow:0 0 8px var(--neon),0 0 20px rgba(21,255,149,.6);
-      margin-bottom:20px;
-    }
-    .hero p {
-      color:#ccc;
-      margin-bottom:25px;
-    }
+/* cartão mais escuro para ler melhor */
+.card{
+  background: rgba(0,0,0,.72) !important;
+  border: 1px solid rgba(21,255,149,.22) !important;
+  box-shadow: 0 10px 28px rgba(0,0,0,.55) !important;
+  border-radius: 18px !important;
+}
+.card h3{ margin-bottom: 14px !important; }
 
-    /* Botão principal */
-    .btn {
-      background: var(--neon);
-      color:#000; /* PRETO */
-      font-weight:900;
-      border-radius:18px;
-      padding:14px 24px;
-      text-transform:uppercase;
-      letter-spacing:.08em;
-      box-shadow:0 0 20px var(--neon),0 0 40px rgba(21,255,149,.5);
-      transition:transform .15s, filter .15s;
-      border:none;
-      cursor:pointer;
-    }
-    .btn:hover {
-      filter:brightness(1.15);
-      transform:translateY(-2px);
-    }
+/* botão "Iniciar Protocolo": neon limpo + letra preta */
+.btn#startBtn,
+#startBtn.btn {
+  background: #15ff95 !important;
+  color: #000 !important;
+  box-shadow: 0 0 14px rgba(21,255,149,.35) !important;
+  border: 1px solid #0adf87 !important;
+}
 
-    /* Perguntas */
-    .card {
-      margin:40px auto;
-      max-width:500px;
-      padding:20px;
-      border-radius:18px;
-      background:rgba(0,0,0,.65);
-      border:1px solid rgba(21,255,149,.2);
-      text-align:center;
-    }
-    .card h3 {
-      color:var(--neon);
-      text-shadow:0 0 6px var(--neon);
-      margin-bottom:20px;
-    }
+/* opções do quiz: verde neon (sólido, sem excesso), texto preto */
+#quiz .answer{
+  background: #15ff95 !important;           /* verde neon sólido (legível) */
+  color: #000 !important;                    /* letras pretas fortes */
+  font-weight: 900 !important;
+  border: 1px solid #09c773 !important;
+  box-shadow: 0 2px 0 #0aa967 inset, 0 0 10px rgba(21,255,149,.25) !important;
+  border-radius: 14px !important;
+  padding: 14px !important;
+  filter: none !important;
+  text-shadow: none !important;
+}
+#quiz .answer:hover{ filter: brightness(1.05) !important; transform: translateY(-1px); }
 
-    /* Opções do quiz */
-    .answer {
-      background: rgba(21,255,149,0.78); /* verde neon translúcido */
-      color:#000;                        /* texto preto forte */
-      font-weight:900;
-      border-radius:14px;
-      padding:14px;
-      margin:10px 0;
-      text-align:center;
-      box-shadow:0 0 14px rgba(21,255,149,.7), inset 0 0 6px rgba(0,0,0,.5);
-      transition:transform .15s, filter .15s;
-      cursor:pointer;
-      display:block;
-    }
-    .answer:hover {
-      filter:brightness(1.15);
-      transform:translateY(-2px);
-    }
-  </style>
-</head>
-<body>
-  <canvas id="matrix"></canvas>
-
-  <div id="hud"> <span id="xp">0 XP</span> | <span id="lvl">LVL 1</span> </div>
-
-  <!-- Tela inicial -->
-  <section id="intro" class="hero">
-    <h1>INICIANDO PROTOCOLO BLACK...</h1>
-    <p>Sistema carregado. Pressione para continuar.</p>
-    <button id="startBtn" class="btn">Iniciar Protocolo</button>
-  </section>
-
-  <!-- Quiz -->
-  <form id="quiz" class="hidden">
-    <div class="card">
-      <h3>Qual seu principal objetivo agora?</h3>
-      <button type="button" class="answer">Renda extra imediata</button>
-      <button type="button" class="answer">Estruturar vendas no sigilo</button>
-      <button type="button" class="answer">Validar um produto</button>
-      <button type="button" class="answer">Escalar o que já vende</button>
-    </div>
-  </form>
-
-<script>
-  // ===== Matrix Effect =====
-  const canvas=document.getElementById("matrix");
-  const ctx=canvas.getContext("2d");
-  canvas.height=window.innerHeight; canvas.width=window.innerWidth;
-  const letters="アカサタナハマヤラワ0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
-  const font=14; const cols=canvas.width/font;
-  const drops=Array(cols).fill(1);
-
-  function draw(){
-    ctx.fillStyle="rgba(0,0,0,0.08)";
-    ctx.fillRect(0,0,canvas.width,canvas.height);
-    ctx.fillStyle="#0f0"; ctx.font=font+"px monospace";
-    for(let i=0;i<drops.length;i++){
-      const txt=letters[Math.floor(Math.random()*letters.length)];
-      ctx.fillText(txt,i*font,drops[i]*font);
-      if(drops[i]*font>canvas.height && Math.random()>0.975) drops[i]=0;
-      drops[i]++;
-    }
-  }
-  setInterval(draw,40);
-
-  // ===== XP e Quiz =====
-  let xp=0, lvl=1;
-  function addXP(n){
-    xp+=n; if(xp>=lvl*100){ lvl++; }
-    document.getElementById("xp").textContent=xp+" XP";
-    document.getElementById("lvl").textContent="LVL "+lvl;
-  }
-
-  document.getElementById("startBtn").addEventListener("click",()=>{
-    document.getElementById("intro").style.display="none";
-    document.getElementById("quiz").classList.remove("hidden");
-    addXP(100);
-  });
-
-  document.querySelectorAll(".answer").forEach(btn=>{
-    btn.addEventListener("click",()=>{
-      addXP(50);
-      alert("Você escolheu: "+btn.textContent);
-    });
-  });
-</script>
-</body>
-</html>
+/* HUD mais discreto */
+#hud{
+  box-shadow: 0 0 8px rgba(21,255,149,.25) !important;
+  border-color: rgba(21,255,149,.28) !important;
+}
