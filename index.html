@@ -4,221 +4,178 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <title>Sistema Brutal – Acesso Sigiloso</title>
-  <meta name="description" content="Isso não é um curso. É um sistema brutal que trabalha no automático efetuando vendas de diversos produtos.">
-  <meta property="og:title" content="Sistema Brutal – Acesso Sigiloso">
-  <meta property="og:description" content="Clique em CONTINUAR para receber seu acesso em 1 minuto.">
-  <meta property="og:type" content="website">
-  <meta property="og:image" content="/og-cover.png">
+  <title>Sistema Oculto – Acesso Sigiloso</title>
+  <meta name="description" content="Um sistema oculto que fatura todos os dias no automático — sem aparecer.">
   <meta name="theme-color" content="#ff2ea6">
 
   <!-- Fonte -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
 
   <style>
     :root{
-      --accent:#ff2ea6; --accent-soft:rgba(255,46,166,.22); --accent-strong:rgba(255,46,166,.45);
-      --bg-1:#000; --bg-2:#0b0b0b; --bg-3:#101010;
-      --text:#f3f3f3; --muted:#bcbcbc; --card:rgba(255,255,255,.06); --stroke:rgba(255,255,255,.08);
+      --accent:#ff2ea6;
+      --accent-soft:rgba(255,46,166,.22);
+      --bg:#07050A;
+      --text:#f4f4f5;
+      --muted:#b9b3c5;
       --on-accent:#0b0b0b;
     }
-    *{box-sizing:border-box}
-    html,body{height:100%}
+    *{box-sizing:border-box;margin:0;padding:0}
     body{
-      margin:0; font-family:'Montserrat',system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; color:var(--text);
-      background:
-        radial-gradient(1200px 800px at 10% -10%, var(--bg-2) 0%, var(--bg-1) 60%),
-        radial-gradient(900px 600px at 100% 110%, var(--bg-3) 0%, var(--bg-1) 60%), #000;
+      font-family:'Montserrat',sans-serif;
+      background:var(--bg);
+      color:var(--text);
+      text-align:center;
       overflow-x:hidden;
     }
+    .wrap{
+      position:relative;
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:24px;
+    }
+    .content{width:100%;max-width:700px;z-index:1}
 
-    /* matrix rain */
-    #matrix{position:fixed; inset:0; z-index:0; pointer-events:none; filter:drop-shadow(0 0 6px #ff6ecf); opacity:.7}
+    /* Fundo chuva de dinheiro */
+    #moneyCanvas{
+      position:fixed;
+      inset:0;
+      z-index:0;
+      pointer-events:none;
+    }
 
-    .wrap{position:relative; z-index:1; min-height:100dvh; display:flex; align-items:center; justify-content:center; padding:32px 16px}
-    .shell{width:100%; max-width:780px; display:flex; flex-direction:column; gap:18px; background:var(--card); border:1px solid var(--stroke);
-      border-radius:18px; padding:22px 18px; backdrop-filter:blur(10px); box-shadow:0 0 18px var(--accent-soft)}
+    .proof-img{
+      margin-bottom:12px;
+      border-radius:18px;
+      overflow:hidden;
+      box-shadow:0 0 22px var(--accent-soft),0 0 60px rgba(255,46,166,.18);
+    }
+    .proof-img img{width:100%;height:auto;display:block}
+    .proof-caption{font-size:13px;color:var(--muted);margin-bottom:18px}
 
-    .card{background:var(--card); border:1px solid var(--stroke); border-radius:14px; padding:14px}
-    .title{font-size:clamp(24px,5.2vw,44px); line-height:1.15; font-weight:800; letter-spacing:.2px; text-shadow:0 0 14px var(--accent-soft)}
-    .subtitle{color:var(--muted); font-size:clamp(14px,2.6vw,16px); margin-top:-4px}
-    .badge{display:inline-flex; align-items:center; gap:8px; padding:6px 12px; border-radius:999px; font-weight:800; font-size:12px;
-      background:#121212; border:1px solid var(--stroke); box-shadow:0 0 14px var(--accent-soft)}
-    .cta-row{display:flex; gap:10px; flex-wrap:wrap; margin-top:12px}
+    .title{font-size:clamp(26px,5vw,40px);font-weight:800;margin-bottom:12px}
+    .subtitle{font-size:18px;font-weight:600;color:var(--muted);margin-bottom:20px}
 
-    .btn{display:inline-flex; align-items:center; justify-content:center; gap:10px; border:1px solid var(--stroke); border-radius:999px;
-      padding:14px 20px; font-weight:800; letter-spacing:.2px; cursor:pointer; background:#141414; color:#fff;
-      transition:transform .15s ease, box-shadow .15s ease, background .15s ease}
-    .btn:hover{transform:translateY(-1px); box-shadow:0 0 18px var(--accent-soft)}
-    .btn-primary{background:var(--accent); color:var(--on-accent); border-color:transparent;
-      box-shadow:0 0 18px var(--accent-soft), 0 0 42px var(--accent-soft)}
-    .btn-primary:hover{box-shadow:0 0 22px var(--accent-strong), 0 0 60px var(--accent-strong)}
+    .btn{
+      display:inline-block;
+      padding:18px 28px;
+      font-size:18px;
+      font-weight:800;
+      border-radius:999px;
+      background:var(--accent);
+      color:var(--on-accent);
+      text-decoration:none;
+      box-shadow:0 0 22px var(--accent-soft),0 0 42px var(--accent-soft);
+      transition:transform .15s ease,box-shadow .15s ease;
+    }
+    .btn:hover{
+      transform:translateY(-2px);
+      box-shadow:0 0 30px rgba(255,46,166,.6),0 0 60px rgba(255,46,166,.35);
+    }
 
-    .hero-impact{position:relative; overflow:hidden}
-    .hero-impact::before{content:""; position:absolute; inset:-2px;
-      background:radial-gradient(1200px 400px at -10% -20%, rgba(255,46,166,.18), transparent 60%),
-                 radial-gradient(900px 500px at 120% 120%, rgba(255,46,166,.14), transparent 60%);
-      pointer-events:none}
+    .slots{
+      margin-top:16px;
+      font-size:16px;
+      font-weight:700;
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 16px;
+      border-radius:999px;
+      background:rgba(255,255,255,.06);
+      box-shadow:0 0 16px var(--accent-soft);
+    }
+    .slots span.value{
+      background:var(--accent);
+      color:var(--on-accent);
+      padding:6px 14px;
+      border-radius:999px;
+      font-weight:900;
+      min-width:48px;
+    }
 
-    /* print do painel (acima do CTA) */
-    .proof-block{display:flex; flex-direction:column; gap:10px; margin-bottom:8px}
-    .proof-img{border-radius:16px; border:1px solid var(--stroke); overflow:hidden; background:#0e0e0e}
-    .proof-img img{display:block; width:100%; height:auto}
-    .proof-caption{font-size:12px; color:var(--muted)}
-
-    /* chips de prova curta (opcional) */
-    .chip-row{display:flex; gap:8px; flex-wrap:wrap; margin-top:8px}
-    .chip{display:inline-flex; align-items:center; gap:6px; padding:6px 10px; border-radius:999px; font-weight:800; font-size:12px;
-      background:rgba(255,255,255,.06); border:1px solid var(--stroke)}
-    .chip .kv{background:var(--accent); color:var(--on-accent); padding:2px 8px; border-radius:999px; box-shadow:0 0 10px var(--accent-soft)}
-
-    /* quiz */
-    .quiz-option{width:100%; text-align:left; background:rgba(255,255,255,.92); color:#000; border:1px solid rgba(0,0,0,.08);
-      border-radius:14px; padding:12px 14px; font-weight:700; cursor:pointer;
-      transition:transform .12s ease, box-shadow .12s ease, background .12s ease; margin-bottom:10px}
-    .quiz-option:hover{background:#fff; transform:translateY(-1px); box-shadow:0 0 18px var(--accent-soft)}
-
-    .score-pill{position:fixed; z-index:2; top:14px; right:14px; background:linear-gradient(90deg,#1a1a1a,#0f0f0f);
-      border:1px solid var(--stroke); color:#fff; padding:8px 14px; border-radius:999px; font-weight:800; box-shadow:0 0 16px var(--accent-soft); font-size:14px}
-
-    .status{display:none; gap:8px; align-items:center; color:var(--muted); font-size:14px}
-    .dot{width:8px; height:8px; border-radius:50%; background:var(--accent); box-shadow:0 0 10px var(--accent-soft); animation:blink 1s infinite alternate}
-    .dot:nth-child(2){animation-delay:.2s} .dot:nth-child(3){animation-delay:.4s}
-    @keyframes blink{from{opacity:.2} to{opacity:1}}
+    footer{margin-top:30px;font-size:12px;color:var(--muted)}
   </style>
 </head>
 <body>
-  <canvas id="matrix"></canvas>
-  <div id="score-pill" class="score-pill">Pontos: 0</div>
+  <canvas id="moneyCanvas"></canvas>
 
   <div class="wrap">
-    <main class="shell" role="main">
-      <!-- HERO -->
-      <header class="card hero-impact">
-        <!-- PROVA: PRINT ACIMA DO CTA -->
-        <div class="proof-block">
-          <div class="proof-img">
-            <!-- Troque o src para o local do seu arquivo -->
-            <img src="print-painel.jpg" alt="Comprovante real do painel: saldo total e vendas do dia">
-          </div>
-          <div class="proof-caption">Resultado real do meu painel — Saldo total R$ 28.736,75 • Disponível R$ 19.210,87 • Vendas hoje R$ 1.584,37 • Ontem R$ 1.897,28.</div>
-        </div>
+    <div class="content">
+      <!-- Print -->
+      <div class="proof-img">
+        <img src="print-painel.jpg" alt="Comprovante real do painel">
+      </div>
+      <div class="proof-caption">
+        Resultado real do meu painel — Saldo total R$ 28.736,75 • Disponível R$ 19.210,87 • Vendas hoje R$ 1.584,37 • Ontem R$ 1.897,28.<br>
+        <em>Resultados variam conforme aplicação.</em>
+      </div>
 
-        <span class="badge">Acesso restrito</span>
+      <!-- Texto -->
+      <h1 class="title">⚡ Um sistema oculto que fatura todos os dias no automático — sem aparecer.</h1>
+      <p class="subtitle">Receba agora o acesso exclusivo direto no WhatsApp.</p>
 
-        <h1 class="title">⚡ <strong>ISSO NÃO É UM CURSO.</strong> É UM <strong>SISTEMA BRUTAL</strong> QUE TRABALHA NO AUTOMÁTICO, EFETUANDO VENDAS DE DIVERSOS PRODUTOS.</h1>
-        <p class="subtitle"><strong>CLIQUE EM CONTINUAR PARA RECEBER O SEU ACESSO EM 1 MINUTO.</strong></p>
+      <!-- CTA -->
+      <a href="https://wa.me/5547991473219?text=Oi%20Carina!%20T%C3%B4%20curiosa%20pra%20saber%20como%20esse%20m%C3%A9todo%20funciona%20na%20pr%C3%A1tica." target="_blank" rel="noopener" class="btn">
+        QUERO ATIVAR MEU SISTEMA AGORA
+      </a>
 
-        <div class="cta-row">
-          <button class="btn btn-primary" id="startBtn">CONTINUAR</button>
-          <span class="muted">⏳ Vagas liberadas apenas hoje.</span>
-        </div>
+      <!-- Contador -->
+      <div class="slots">
+        Acessos disponíveis <span class="value" id="slots-value">20</span>
+      </div>
 
-        <!-- chips curtos (opcional) -->
-        <div class="chip-row">
-          <span class="chip"><span class="kv" id="counter-num">37</span> ativações/24h</span>
-          <span class="chip">Exemplo ilustrativo • resultados variam</span>
-        </div>
-      </header>
-
-      <!-- QUIZ -->
-      <section id="quiz" class="card" style="display:none">
-        <div id="status" class="status" aria-live="polite">
-          <div class="dot"></div><div class="dot"></div><div class="dot"></div>
-          <span id="statusText">Analisando seu perfil…</span>
-        </div>
-
-        <!-- Q1 -->
-        <div id="q1" style="display:none">
-          <h2 style="margin:8px 0 6px">Você gostaria de ativar um <b>sistema automático</b> que faz vendas todos os dias sem precisar aparecer?</h2>
-          <button class="quiz-option" data-points="10" data-q="q1" data-a="sim">✅ Sim, quero conhecer agora</button>
-          <button class="quiz-option" data-points="6" data-q="q1" data-a="duvidas">🤔 Tenho dúvidas, mas quero ver</button>
-        </div>
-
-        <!-- Q2 -->
-        <div id="q2" style="display:none">
-          <h2 style="margin:8px 0 6px">Qual situação descreve melhor você hoje?</h2>
-          <button class="quiz-option" data-points="8" data-q="q2" data-a="iniciante">👩‍💻 Nunca ganhei online e quero começar</button>
-          <button class="quiz-option" data-points="7" data-q="q2" data-a="frustrada">🔁 Já tentei e não consegui</button>
-          <button class="quiz-option" data-points="9" data-q="q2" data-a="avancada">🚀 Já vendo e quero automatizar</button>
-        </div>
-
-        <!-- Q3 -->
-        <div id="q3" style="display:none">
-          <h2 style="margin:8px 0 6px">Perfeito. Onde deseja receber o acesso?</h2>
-          <button class="btn btn-primary" id="whatsBtn">📲 WhatsApp (recomendado)</button>
-          <button class="btn" id="emailBtn">✉️ E-mail</button>
-          <p class="subtitle" style="margin-top:8px">Pelo WhatsApp você recebe mais rápido.</p>
-        </div>
-      </section>
-
-      <footer class="subtitle" style="text-align:center;font-size:12px;margin-top:2px">
-        © <span id="yy"></span> Sistema Brutal — Acesso Sigiloso
-      </footer>
-    </main>
+      <footer>© 2025 Sistema Oculto — Acesso Sigiloso</footer>
+    </div>
   </div>
 
   <script>
-    // Ano
-    document.getElementById('yy').textContent = new Date().getFullYear();
+    // CONTADOR DE VAGAS
+    let slots = localStorage.getItem("slotsValue");
+    slots = slots ? parseInt(slots) : 20;
+    const el = document.getElementById("slots-value");
+    el.textContent = slots;
 
-    // Estado
-    let score = 0; const answers = {q1:null, q2:null};
-    const scorePill = document.getElementById('score-pill');
-    function addPoints(n){ score += Number(n||0); scorePill.textContent = `Pontos: ${score}`; }
+    function decreaseSlots(){
+      if(slots > 0){
+        slots--;
+        localStorage.setItem("slotsValue", slots);
+        el.textContent = slots;
+      }
+    }
+    setInterval(()=>{ 
+      if(slots>0) decreaseSlots();
+    }, 25000 + Math.random()*20000); // a cada 25–45s
 
-    // Audio (WebAudio)
-    const AudioCtx = window.AudioContext || window.webkitAudioContext; const audioCtx = new AudioCtx();
-    function beep(freq=880,duration=120,type='sine',volume=0.05){ const o=audioCtx.createOscillator(), g=audioCtx.createGain();
-      o.type=type; o.frequency.value=freq; g.gain.value=volume; o.connect(g); g.connect(audioCtx.destination); o.start(); setTimeout(()=>o.stop(),duration); }
-    function clickSound(){ beep(1200,80,'square',0.06); if(navigator.vibrate) navigator.vibrate(15); }
-    function successSound(){ beep(620,120,'triangle',0.07); setTimeout(()=>beep(880,140,'triangle',0.07),120); if(navigator.vibrate) navigator.vibrate([20,40,20]); }
+    // CHUVA DE DINHEIRO
+    const canvas=document.getElementById("moneyCanvas");
+    const ctx=canvas.getContext("2d");
+    let W,H; 
+    function resize(){W=canvas.width=window.innerWidth; H=canvas.height=window.innerHeight}
+    window.addEventListener("resize",resize); resize();
 
-    // Helpers
-    const $ = s=>document.querySelector(s), show = el=>el.style.display='', hide = el=>el.style.display='none';
-    function microDelay(text='Analisando seu perfil…', cb=()=>{}){ const st=$('#status'), tx=$('#statusText'); tx.textContent=text; show(st); setTimeout(()=>{hide(st); cb();}, 180); }
+    const notes=[];
+    const noteImg=new Image();
+    noteImg.src="https://i.ibb.co/V2HG6Gh/note100.png"; // nota de exemplo (trocar se quiser outras)
 
-    // Fluxo
-    $('#startBtn').addEventListener('click',()=>{ clickSound(); hide($('#startBtn').closest('header')); show($('#quiz')); microDelay('Inicializando…',()=>show($('#q1'))); });
-    $('#quiz').addEventListener('click',(e)=>{
-      const btn = e.target.closest('.quiz-option'); if(!btn) return;
-      clickSound(); addPoints(btn.getAttribute('data-points'));
-      answers[btn.getAttribute('data-q')] = btn.getAttribute('data-a');
-      if(btn.getAttribute('data-q')==='q1'){ hide($('#q1')); microDelay('Analisando seu perfil…',()=>show($('#q2'))); }
-      else if(btn.getAttribute('data-q')==='q2'){ hide($('#q2')); microDelay('Validando acesso sigiloso…',()=>show($('#q3'))); }
-    });
-    $('#whatsBtn').addEventListener('click',()=>{
-      successSound();
-      const phone = '5521972362435'; // seu número em DDI+DDD
-      const perfil = answers.q2==='iniciante'?'Iniciante':answers.q2==='frustrada'?'Já tentei e não consegui':answers.q2==='avancada'?'Avançada':'Não informado';
-      const msg = `Oi, Carina! Finalizei o quiz do Sistema. Quero liberar meu acesso. Pontos: ${score}. Perfil: ${perfil}. Pode me orientar?`;
-      const url = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
-      setTimeout(()=>window.location.href=url,250);
-    });
-    $('#emailBtn').addEventListener('click',()=>{ clickSound(); alert('Para agilizar seu acesso, recomendo receber pelo WhatsApp.'); });
-
-    // contador chip
-    (function(){
-      const el=document.getElementById('counter-num'); let base=32+Math.floor(Math.random()*8);
-      el.textContent=base; setInterval(()=>{ base=Math.max(12, base + (Math.random()>.55?1:-1)); el.textContent=base; }, 2200);
-    })();
-
-    // Matrix rain
-    (function(){
-      const canvas=document.getElementById('matrix'), ctx=canvas.getContext('2d');
-      function resize(){ canvas.width=window.innerWidth; canvas.height=window.innerHeight; } resize(); window.addEventListener('resize',resize);
-      const letters='01ABCDEFGHIJKLMNOPQRSTUVWXYZ$#@*%&'; const fontSize=16; const columns=()=>Math.floor(canvas.width/fontSize); let drops=Array(columns()).fill(1);
-      window.addEventListener('resize',()=>{ drops=Array(columns()).fill(1); });
-      (function draw(){
-        ctx.fillStyle='rgba(0,0,0,0.08)'; ctx.fillRect(0,0,canvas.width,canvas.height);
-        ctx.fillStyle='#ff6ecf'; ctx.shadowColor='#ff2ea6'; ctx.shadowBlur=8; ctx.font=`${fontSize}px monospace`;
-        for(let i=0;i<drops.length;i++){ const text=letters.charAt(Math.floor(Math.random()*letters.length)); const x=i*fontSize; const y=drops[i]*fontSize;
-          ctx.fillText(text,x,y); if(y>canvas.height && Math.random()>.975){ drops[i]=0; } drops[i]++; }
-        requestAnimationFrame(draw);
-      })();
-    })();
+    function initNotes(){
+      for(let i=0;i<12;i++){
+        notes.push({x:Math.random()*W,y:Math.random()*H,s:0.5+Math.random()*0.5,vy:1+Math.random()*2});
+      }
+    }
+    function drawNotes(){
+      ctx.clearRect(0,0,W,H);
+      notes.forEach(n=>{
+        ctx.globalAlpha=0.3;
+        ctx.drawImage(noteImg,n.x,n.y,80*n.s,40*n.s);
+        n.y+=n.vy;
+        if(n.y>H){n.y=-50;n.x=Math.random()*W;}
+      });
+      requestAnimationFrame(drawNotes);
+    }
+    noteImg.onload=function(){initNotes();drawNotes();}
   </script>
 </body>
 </html>
