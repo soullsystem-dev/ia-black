@@ -4,12 +4,12 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <title>Mecanismo de Vendas Automáticas – Acesso Sigiloso</title>
-  <meta name="description" content="Ative seu mecanismo oculto de vendas. Responda 2 perguntas e receba o acesso no WhatsApp. Simples, sigiloso e direto do seu celular.">
-  <meta property="og:title" content="Mecanismo de Vendas Automáticas – Acesso Sigiloso">
-  <meta property="og:description" content="Ative seu mecanismo oculto de vendas. Responda 2 perguntas e receba o acesso no WhatsApp.">
+  <title>Sistema Brutal – Acesso Sigiloso</title>
+  <meta name="description" content="Isso não é um curso. É um sistema brutal que trabalha no automático efetuando vendas de diversos produtos.">
+  <meta property="og:title" content="Sistema Brutal – Acesso Sigiloso">
+  <meta property="og:description" content="Clique em CONTINUAR para receber seu acesso em 1 minuto.">
   <meta property="og:type" content="website">
-  <meta property="og:image" content="/og-cover.png"><!-- TODO: opcional -->
+  <meta property="og:image" content="/og-cover.png">
   <meta name="theme-color" content="#ff2ea6">
 
   <!-- Fonte -->
@@ -19,384 +19,205 @@
 
   <style>
     :root{
-      --accent: #ff2ea6;                  /* rosa neon principal */
-      --accent-soft: rgba(255,46,166,.22);
-      --accent-strong: rgba(255,46,166,.45);
+      --accent:#ff2ea6; --accent-soft:rgba(255,46,166,.22); --accent-strong:rgba(255,46,166,.45);
       --bg-1:#000; --bg-2:#0b0b0b; --bg-3:#101010;
-      --text:#f3f3f3; --muted:#bcbcbc;
-      --card: rgba(255,255,255,0.06);
-      --stroke: rgba(255,255,255,0.08);
-      --on-accent: #0b0b0b;               /* texto no botão rosa */
+      --text:#f3f3f3; --muted:#bcbcbc; --card:rgba(255,255,255,.06); --stroke:rgba(255,255,255,.08);
+      --on-accent:#0b0b0b;
     }
-    *{ box-sizing:border-box }
-    html,body{ height:100%; }
+    *{box-sizing:border-box}
+    html,body{height:100%}
     body{
-      margin:0;
-      font-family:'Montserrat',system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
-      color:var(--text);
+      margin:0; font-family:'Montserrat',system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; color:var(--text);
       background:
         radial-gradient(1200px 800px at 10% -10%, var(--bg-2) 0%, var(--bg-1) 60%),
-        radial-gradient(900px 600px at 100% 110%, var(--bg-3) 0%, var(--bg-1) 60%),
-        #000;
+        radial-gradient(900px 600px at 100% 110%, var(--bg-3) 0%, var(--bg-1) 60%), #000;
       overflow-x:hidden;
     }
 
-    /* Canvas do "código caindo" ao fundo */
-    #matrix{
-      position: fixed; inset:0; z-index:0; pointer-events:none;
-      filter: drop-shadow(0 0 6px #ff6ecf);
-      opacity:.7;
-    }
+    /* matrix rain */
+    #matrix{position:fixed; inset:0; z-index:0; pointer-events:none; filter:drop-shadow(0 0 6px #ff6ecf); opacity:.7}
 
-    /* Container principal */
-    .wrap{
-      position: relative; z-index:1;
-      min-height: 100dvh;
-      display:flex; align-items:center; justify-content:center;
-      padding: 32px 16px;
-    }
-    .shell{
-      width:100%; max-width: 760px;
-      display:flex; flex-direction:column; gap:18px;
-      background: var(--card);
-      border:1px solid var(--stroke);
-      border-radius: 18px;
-      padding: 22px 18px;
-      backdrop-filter: blur(10px);
-      box-shadow: 0 0 18px var(--accent-soft);
-    }
+    .wrap{position:relative; z-index:1; min-height:100dvh; display:flex; align-items:center; justify-content:center; padding:32px 16px}
+    .shell{width:100%; max-width:780px; display:flex; flex-direction:column; gap:18px; background:var(--card); border:1px solid var(--stroke);
+      border-radius:18px; padding:22px 18px; backdrop-filter:blur(10px); box-shadow:0 0 18px var(--accent-soft)}
 
-    /* Hero */
-    .title{
-      font-size: clamp(24px, 4.5vw, 38px);
-      line-height: 1.15;
-      font-weight: 800;
-      letter-spacing:.2px;
-      text-shadow: 0 0 14px var(--accent-soft);
-    }
-    .subtitle{
-      color: var(--muted);
-      font-size: clamp(14px, 2.6vw, 16px);
-      margin-top:-4px;
-    }
+    .card{background:var(--card); border:1px solid var(--stroke); border-radius:14px; padding:14px}
+    .title{font-size:clamp(24px,5.2vw,44px); line-height:1.15; font-weight:800; letter-spacing:.2px; text-shadow:0 0 14px var(--accent-soft)}
+    .subtitle{color:var(--muted); font-size:clamp(14px,2.6vw,16px); margin-top:-4px}
+    .badge{display:inline-flex; align-items:center; gap:8px; padding:6px 12px; border-radius:999px; font-weight:800; font-size:12px;
+      background:#121212; border:1px solid var(--stroke); box-shadow:0 0 14px var(--accent-soft)}
+    .cta-row{display:flex; gap:10px; flex-wrap:wrap; margin-top:12px}
 
-    /* Botões */
-    .btn{
-      display:inline-flex; align-items:center; justify-content:center;
-      gap:10px; border:1px solid var(--stroke);
-      border-radius: 999px; padding: 14px 20px;
-      font-weight: 800; letter-spacing:.2px; cursor:pointer;
-      background: #141414; color:#fff;
-      transition: transform .15s ease, box-shadow .15s ease, background .15s ease;
-    }
-    .btn:hover{ transform: translateY(-1px); box-shadow: 0 0 18px var(--accent-soft); }
-    .btn-primary{
-      background: var(--accent); color: var(--on-accent); border-color: transparent;
-      box-shadow: 0 0 18px var(--accent-soft), 0 0 42px var(--accent-soft);
-    }
-    .btn-primary:hover{ box-shadow: 0 0 22px var(--accent-strong), 0 0 60px var(--accent-strong); }
+    .btn{display:inline-flex; align-items:center; justify-content:center; gap:10px; border:1px solid var(--stroke); border-radius:999px;
+      padding:14px 20px; font-weight:800; letter-spacing:.2px; cursor:pointer; background:#141414; color:#fff;
+      transition:transform .15s ease, box-shadow .15s ease, background .15s ease}
+    .btn:hover{transform:translateY(-1px); box-shadow:0 0 18px var(--accent-soft)}
+    .btn-primary{background:var(--accent); color:var(--on-accent); border-color:transparent;
+      box-shadow:0 0 18px var(--accent-soft), 0 0 42px var(--accent-soft)}
+    .btn-primary:hover{box-shadow:0 0 22px var(--accent-strong), 0 0 60px var(--accent-strong)}
 
-    /* Opções do quiz (texto preto em fundo claro) */
-    .quiz-option{
-      width:100%; text-align:left;
-      background: rgba(255,255,255,.92);
-      color:#000; border:1px solid rgba(0,0,0,.08);
-      border-radius: 14px; padding: 12px 14px;
-      font-weight: 700; cursor: pointer;
-      transition: transform .12s ease, box-shadow .12s ease, background .12s ease;
-      margin-bottom: 10px;
-    }
-    .quiz-option:hover{
-      background:#fff; transform: translateY(-1px);
-      box-shadow: 0 0 18px var(--accent-soft);
-    }
+    .hero-impact{position:relative; overflow:hidden}
+    .hero-impact::before{content:""; position:absolute; inset:-2px;
+      background:radial-gradient(1200px 400px at -10% -20%, rgba(255,46,166,.18), transparent 60%),
+                 radial-gradient(900px 500px at 120% 120%, rgba(255,46,166,.14), transparent 60%);
+      pointer-events:none}
 
-    /* Cartões */
-    .card{
-      background: var(--card);
-      border:1px solid var(--stroke);
-      border-radius: 14px;
-      padding: 14px;
-    }
+    /* print do painel (acima do CTA) */
+    .proof-block{display:flex; flex-direction:column; gap:10px; margin-bottom:8px}
+    .proof-img{border-radius:16px; border:1px solid var(--stroke); overflow:hidden; background:#0e0e0e}
+    .proof-img img{display:block; width:100%; height:auto}
+    .proof-caption{font-size:12px; color:var(--muted)}
 
-    /* Score pill fixo no topo */
-    .score-pill{
-      position: fixed; z-index:2;
-      top: 14px; right: 14px;
-      background: linear-gradient(90deg, #1a1a1a, #0f0f0f);
-      border: 1px solid var(--stroke);
-      color: #fff; padding: 8px 14px;
-      border-radius: 999px; font-weight: 800;
-      box-shadow: 0 0 16px var(--accent-soft);
-      font-size: 14px;
-    }
+    /* chips de prova curta (opcional) */
+    .chip-row{display:flex; gap:8px; flex-wrap:wrap; margin-top:8px}
+    .chip{display:inline-flex; align-items:center; gap:6px; padding:6px 10px; border-radius:999px; font-weight:800; font-size:12px;
+      background:rgba(255,255,255,.06); border:1px solid var(--stroke)}
+    .chip .kv{background:var(--accent); color:var(--on-accent); padding:2px 8px; border-radius:999px; box-shadow:0 0 10px var(--accent-soft)}
 
-    /* Status/loader entre passos */
-    .status{
-      display:none; gap:8px; align-items:center;
-      color: var(--muted); font-size: 14px;
-    }
-    .dot{
-      width:8px; height:8px; border-radius:50%;
-      background: var(--accent);
-      box-shadow: 0 0 10px var(--accent-soft);
-      animation: blink 1s infinite alternate;
-    }
-    .dot:nth-child(2){ animation-delay:.2s }
-    .dot:nth-child(3){ animation-delay:.4s }
-    @keyframes blink{ from{opacity:.2} to{opacity:1} }
+    /* quiz */
+    .quiz-option{width:100%; text-align:left; background:rgba(255,255,255,.92); color:#000; border:1px solid rgba(0,0,0,.08);
+      border-radius:14px; padding:12px 14px; font-weight:700; cursor:pointer;
+      transition:transform .12s ease, box-shadow .12s ease, background .12s ease; margin-bottom:10px}
+    .quiz-option:hover{background:#fff; transform:translateY(-1px); box-shadow:0 0 18px var(--accent-soft)}
 
-    /* Regras responsivas simples */
-    @media (min-width: 860px){
-      .shell{ padding: 28px 22px; }
-    }
+    .score-pill{position:fixed; z-index:2; top:14px; right:14px; background:linear-gradient(90deg,#1a1a1a,#0f0f0f);
+      border:1px solid var(--stroke); color:#fff; padding:8px 14px; border-radius:999px; font-weight:800; box-shadow:0 0 16px var(--accent-soft); font-size:14px}
 
-    /* Micro-separadores */
-    .muted{ color:var(--muted) }
-    .sep{ height:1px; background:var(--stroke); margin:6px 0 10px }
+    .status{display:none; gap:8px; align-items:center; color:var(--muted); font-size:14px}
+    .dot{width:8px; height:8px; border-radius:50%; background:var(--accent); box-shadow:0 0 10px var(--accent-soft); animation:blink 1s infinite alternate}
+    .dot:nth-child(2){animation-delay:.2s} .dot:nth-child(3){animation-delay:.4s}
+    @keyframes blink{from{opacity:.2} to{opacity:1}}
   </style>
 </head>
 <body>
-  <!-- Canvas do efeito "códigos caindo" -->
   <canvas id="matrix"></canvas>
-
-  <!-- Pontuação -->
   <div id="score-pill" class="score-pill">Pontos: 0</div>
 
-  <!-- Conteúdo -->
   <div class="wrap">
     <main class="shell" role="main">
       <!-- HERO -->
       <header class="card hero-impact">
-  <div class="hero-top">
-    <span class="badge">Acesso restrito</span>
-    <h1 class="title xl">
-      ⚡ Ative agora o <u>mecanismo oculto</u> que pode faturar todos os dias — sem aparecer.
-    </h1>
-    <p class="subtitle">
-      Responda 2 perguntas rápidas e receba o acesso no WhatsApp. Simples, sigiloso e direto do seu celular.
-    </p>
-    <div class="cta-row">
-      <button class="btn btn-primary" id="startBtn">COMEÇAR AGORA</button>
-      <span class="muted">⏳ Vagas liberadas hoje.</span>
-    </div>
-  </div>
-
-  <!-- PROVA SOCIAL: notificações (use prints reais depois, se quiser troco por img) -->
-  <aside class="proofs">
-    <div class="live-counter">
-      <strong id="counter-num">37</strong> vendas nas últimas 24h
-    </div>
-
-    <!-- “Comprovante/recibo” estilo clean -->
-    <div class="receipt">
-      <div class="r-hd">
-        <div>
-          <div class="r-title">Exemplo ilustrativo</div>
-          <div class="r-sub">Mecanismo de Vendas Automáticas</div>
+        <!-- PROVA: PRINT ACIMA DO CTA -->
+        <div class="proof-block">
+          <div class="proof-img">
+            <!-- Troque o src para o local do seu arquivo -->
+            <img src="print-painel.jpg" alt="Comprovante real do painel: saldo total e vendas do dia">
+          </div>
+          <div class="proof-caption">Resultado real do meu painel — Saldo total R$ 28.736,75 • Disponível R$ 19.210,87 • Vendas hoje R$ 1.584,37 • Ontem R$ 1.897,28.</div>
         </div>
-        <div class="r-total">R$ <span id="r-valor">297,00</span></div>
-      </div>
-      <div class="r-row">
-        <span>Horário</span><span id="r-hora">10:42</span>
-      </div>
-      <div class="r-row">
-        <span>Método</span><span>PIX aprovado</span>
-      </div>
-      <div class="r-row">
-        <span>Status</span><span class="ok">Confirmado</span>
-      </div>
-      <div class="r-foot">* Substitua por seus prints reais quando quiser</div>
-    </div>
-  </aside>
 
-  <!-- toasts animados (fake-live; troque por webhooks se quiser real) -->
-  <div class="toasts" aria-live="polite"></div>
-</header>
+        <span class="badge">Acesso restrito</span>
 
+        <h1 class="title">⚡ <strong>ISSO NÃO É UM CURSO.</strong> É UM <strong>SISTEMA BRUTAL</strong> QUE TRABALHA NO AUTOMÁTICO, EFETUANDO VENDAS DE DIVERSOS PRODUTOS.</h1>
+        <p class="subtitle"><strong>CLIQUE EM CONTINUAR PARA RECEBER O SEU ACESSO EM 1 MINUTO.</strong></p>
+
+        <div class="cta-row">
+          <button class="btn btn-primary" id="startBtn">CONTINUAR</button>
+          <span class="muted">⏳ Vagas liberadas apenas hoje.</span>
+        </div>
+
+        <!-- chips curtos (opcional) -->
+        <div class="chip-row">
+          <span class="chip"><span class="kv" id="counter-num">37</span> ativações/24h</span>
+          <span class="chip">Exemplo ilustrativo • resultados variam</span>
+        </div>
+      </header>
 
       <!-- QUIZ -->
       <section id="quiz" class="card" style="display:none">
-        <!-- Status / micro loading -->
         <div id="status" class="status" aria-live="polite">
           <div class="dot"></div><div class="dot"></div><div class="dot"></div>
           <span id="statusText">Analisando seu perfil…</span>
         </div>
 
-        <!-- PASSO 1 -->
+        <!-- Q1 -->
         <div id="q1" style="display:none">
-          <h2 style="margin:8px 0 6px">Você quer ativar um mecanismo sigiloso que trabalha por você todos os dias?</h2>
+          <h2 style="margin:8px 0 6px">Você gostaria de ativar um <b>sistema automático</b> que faz vendas todos os dias sem precisar aparecer?</h2>
           <button class="quiz-option" data-points="10" data-q="q1" data-a="sim">✅ Sim, quero conhecer agora</button>
           <button class="quiz-option" data-points="6" data-q="q1" data-a="duvidas">🤔 Tenho dúvidas, mas quero ver</button>
         </div>
 
-        <!-- PASSO 2 -->
+        <!-- Q2 -->
         <div id="q2" style="display:none">
           <h2 style="margin:8px 0 6px">Qual situação descreve melhor você hoje?</h2>
           <button class="quiz-option" data-points="8" data-q="q2" data-a="iniciante">👩‍💻 Nunca ganhei online e quero começar</button>
           <button class="quiz-option" data-points="7" data-q="q2" data-a="frustrada">🔁 Já tentei e não consegui</button>
-          <button class="quiz-option" data-points="9" data-q="q2" data-a="avancada">🚀 Já vendo e quero automatizar no sigilo</button>
+          <button class="quiz-option" data-points="9" data-q="q2" data-a="avancada">🚀 Já vendo e quero automatizar</button>
         </div>
 
-        <!-- PASSO 3 -->
+        <!-- Q3 -->
         <div id="q3" style="display:none">
           <h2 style="margin:8px 0 6px">Perfeito. Onde deseja receber o acesso?</h2>
-          <div class="sep"></div>
-          <button class="btn btn-primary" id="whatsBtn">📲 Receber no WhatsApp (recomendado)</button>
-          <button class="btn" id="emailBtn">✉️ Receber por e-mail</button>
-          <p class="muted" style="margin-top:8px">Dica: pelo WhatsApp você recebe mais rápido.</p>
+          <button class="btn btn-primary" id="whatsBtn">📲 WhatsApp (recomendado)</button>
+          <button class="btn" id="emailBtn">✉️ E-mail</button>
+          <p class="subtitle" style="margin-top:8px">Pelo WhatsApp você recebe mais rápido.</p>
         </div>
       </section>
 
-      <!-- Rodapé curto -->
-      <footer class="muted" style="text-align:center;font-size:12px;margin-top:2px">
-        <div>© <span id="yy"></span> Mecanismo de Vendas Automáticas — Acesso Sigiloso</div>
+      <footer class="subtitle" style="text-align:center;font-size:12px;margin-top:2px">
+        © <span id="yy"></span> Sistema Brutal — Acesso Sigiloso
       </footer>
     </main>
   </div>
 
   <script>
-    // ========== UTIL: Ano no rodapé ==========
+    // Ano
     document.getElementById('yy').textContent = new Date().getFullYear();
 
-    // ========== STATE ==========
-    let score = 0;
-    const answers = { q1:null, q2:null };
+    // Estado
+    let score = 0; const answers = {q1:null, q2:null};
     const scorePill = document.getElementById('score-pill');
+    function addPoints(n){ score += Number(n||0); scorePill.textContent = `Pontos: ${score}`; }
 
-    function addPoints(n){
-      score += Number(n||0);
-      scorePill.textContent = `Pontos: ${score}`;
-    }
+    // Audio (WebAudio)
+    const AudioCtx = window.AudioContext || window.webkitAudioContext; const audioCtx = new AudioCtx();
+    function beep(freq=880,duration=120,type='sine',volume=0.05){ const o=audioCtx.createOscillator(), g=audioCtx.createGain();
+      o.type=type; o.frequency.value=freq; g.gain.value=volume; o.connect(g); g.connect(audioCtx.destination); o.start(); setTimeout(()=>o.stop(),duration); }
+    function clickSound(){ beep(1200,80,'square',0.06); if(navigator.vibrate) navigator.vibrate(15); }
+    function successSound(){ beep(620,120,'triangle',0.07); setTimeout(()=>beep(880,140,'triangle',0.07),120); if(navigator.vibrate) navigator.vibrate([20,40,20]); }
 
-    // ========== AUDIO (sem arquivos): WebAudio gera os sons ==========
-    const AudioCtx = window.AudioContext || window.webkitAudioContext;
-    const audioCtx = new AudioCtx();
+    // Helpers
+    const $ = s=>document.querySelector(s), show = el=>el.style.display='', hide = el=>el.style.display='none';
+    function microDelay(text='Analisando seu perfil…', cb=()=>{}){ const st=$('#status'), tx=$('#statusText'); tx.textContent=text; show(st); setTimeout(()=>{hide(st); cb();}, 180); }
 
-    function beep(freq=880, duration=120, type='sine', volume=0.05){
-      const o = audioCtx.createOscillator();
-      const g = audioCtx.createGain();
-      o.type = type;
-      o.frequency.value = freq;
-      g.gain.value = volume;
-      o.connect(g); g.connect(audioCtx.destination);
-      o.start();
-      setTimeout(()=>{ o.stop(); }, duration);
-    }
-    function clickSound(){ beep(1200, 80, 'square', 0.06); if(navigator.vibrate) navigator.vibrate(15); }
-    function successSound(){ beep(620, 120, 'triangle', 0.07); setTimeout(()=>beep(880, 140, 'triangle', 0.07), 120); if(navigator.vibrate) navigator.vibrate([20,40,20]); }
-
-    // ========== UI Helpers ==========
-    const $ = sel => document.querySelector(sel);
-    const show = el => (el.style.display = '');
-    const hide = el => (el.style.display = 'none');
-
-    function microDelay(text='Analisando seu perfil…', cb=()=>{}){
-      const status = $('#status');
-      const statusText = $('#statusText');
-      statusText.textContent = text;
-      show(status);
-      setTimeout(() => { hide(status); cb(); }, 180); // 180ms: sensação de "mecanismo"
-    }
-
-    // ========== FLUXO ==========
-    $('#startBtn').addEventListener('click', () => {
-      clickSound();
-      hide($('#startBtn').closest('header')); // esconde hero
-      show($('#quiz'));
-      microDelay('Inicializando mecanismo…', () => show($('#q1')));
+    // Fluxo
+    $('#startBtn').addEventListener('click',()=>{ clickSound(); hide($('#startBtn').closest('header')); show($('#quiz')); microDelay('Inicializando…',()=>show($('#q1'))); });
+    $('#quiz').addEventListener('click',(e)=>{
+      const btn = e.target.closest('.quiz-option'); if(!btn) return;
+      clickSound(); addPoints(btn.getAttribute('data-points'));
+      answers[btn.getAttribute('data-q')] = btn.getAttribute('data-a');
+      if(btn.getAttribute('data-q')==='q1'){ hide($('#q1')); microDelay('Analisando seu perfil…',()=>show($('#q2'))); }
+      else if(btn.getAttribute('data-q')==='q2'){ hide($('#q2')); microDelay('Validando acesso sigiloso…',()=>show($('#q3'))); }
     });
-
-    // Delegate cliques nas opções
-    $('#quiz').addEventListener('click', (ev) => {
-      const btn = ev.target.closest('.quiz-option');
-      if(!btn) return;
-
-      // tocar som e pontuar
-      clickSound();
-      const pts = btn.getAttribute('data-points') || 0;
-      addPoints(pts);
-
-      // salvar resposta
-      const q = btn.getAttribute('data-q');
-      const a = btn.getAttribute('data-a');
-      if(q) answers[q] = a;
-
-      // avançar
-      if(q === 'q1'){
-        hide($('#q1'));
-        microDelay('Analisando seu perfil…', () => show($('#q2')));
-      } else if(q === 'q2'){
-        hide($('#q2'));
-        microDelay('Validando acesso sigiloso…', () => show($('#q3')));
-      }
-    });
-
-    // Q3: WhatsApp
-    $('#whatsBtn').addEventListener('click', () => {
+    $('#whatsBtn').addEventListener('click',()=>{
       successSound();
-
-      // TODO: ajuste aqui seu número de WhatsApp (com DDI e DDD, só números)
-      const phone = '5521972362435'; // +55 21 97236-2435
-
-      const perfil =
-        answers.q2 === 'iniciante' ? 'Iniciante' :
-        answers.q2 === 'frustrada' ? 'Já tentei e não consegui' :
-        answers.q2 === 'avancada' ? 'Avançada' : 'Não informado';
-
-      const msg = `Oi, Carina! Acabei o quiz do Mecanismo. Quero liberar meu acesso. Pontos: ${score}. Perfil: ${perfil}. Bora ativar?`;
+      const phone = '5521972362435'; // seu número em DDI+DDD
+      const perfil = answers.q2==='iniciante'?'Iniciante':answers.q2==='frustrada'?'Já tentei e não consegui':answers.q2==='avancada'?'Avançada':'Não informado';
+      const msg = `Oi, Carina! Finalizei o quiz do Sistema. Quero liberar meu acesso. Pontos: ${score}. Perfil: ${perfil}. Pode me orientar?`;
       const url = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
-
-      // pequena pausa para o som "fechar"
-      setTimeout(()=> window.location.href = url, 250);
+      setTimeout(()=>window.location.href=url,250);
     });
+    $('#emailBtn').addEventListener('click',()=>{ clickSound(); alert('Para agilizar seu acesso, recomendo receber pelo WhatsApp.'); });
 
-    // Q3: Email (opcional — aqui apenas sugere WhatsApp e mantém fluxo)
-    $('#emailBtn').addEventListener('click', () => {
-      clickSound();
-      alert('Para agilizar seu acesso, recomendo receber pelo WhatsApp. Você pode tocar no botão rosa "Receber no WhatsApp".');
-    });
+    // contador chip
+    (function(){
+      const el=document.getElementById('counter-num'); let base=32+Math.floor(Math.random()*8);
+      el.textContent=base; setInterval(()=>{ base=Math.max(12, base + (Math.random()>.55?1:-1)); el.textContent=base; }, 2200);
+    })();
 
-    // ========== MATRIX RAIN (código caindo) ==========
-    (function matrixRain(){
-      const canvas = document.getElementById('matrix');
-      const ctx = canvas.getContext('2d');
-      function resize(){
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-      }
-      resize(); window.addEventListener('resize', resize);
-
-      const letters = '01ABCDEFGHIJKLMNOPQRSTUVWXYZ$#@*%&';
-      const fontSize = 16; // ajuste se quiser letras maiores
-      const columns = Math.floor(canvas.width / fontSize);
-      const drops = Array(columns).fill(1);
-
-      function draw(){
-        // fundo com leve "rastro"
-        ctx.fillStyle = 'rgba(0,0,0,0.08)';
-        ctx.fillRect(0,0,canvas.width,canvas.height);
-
-        ctx.fillStyle = '#ff6ecf'; // tom rosa claro
-        ctx.shadowColor = '#ff2ea6';
-        ctx.shadowBlur = 8;
-        ctx.font = `${fontSize}px monospace`;
-
-        for(let i=0; i<drops.length; i++){
-          const text = letters.charAt(Math.floor(Math.random()*letters.length));
-          const x = i*fontSize;
-          const y = drops[i]*fontSize;
-
-          ctx.fillText(text, x, y);
-
-          if(y > canvas.height && Math.random() > 0.975){
-            drops[i] = 0;
-          }
-          drops[i]++;
-        }
+    // Matrix rain
+    (function(){
+      const canvas=document.getElementById('matrix'), ctx=canvas.getContext('2d');
+      function resize(){ canvas.width=window.innerWidth; canvas.height=window.innerHeight; } resize(); window.addEventListener('resize',resize);
+      const letters='01ABCDEFGHIJKLMNOPQRSTUVWXYZ$#@*%&'; const fontSize=16; const columns=()=>Math.floor(canvas.width/fontSize); let drops=Array(columns()).fill(1);
+      window.addEventListener('resize',()=>{ drops=Array(columns()).fill(1); });
+      (function draw(){
+        ctx.fillStyle='rgba(0,0,0,0.08)'; ctx.fillRect(0,0,canvas.width,canvas.height);
+        ctx.fillStyle='#ff6ecf'; ctx.shadowColor='#ff2ea6'; ctx.shadowBlur=8; ctx.font=`${fontSize}px monospace`;
+        for(let i=0;i<drops.length;i++){ const text=letters.charAt(Math.floor(Math.random()*letters.length)); const x=i*fontSize; const y=drops[i]*fontSize;
+          ctx.fillText(text,x,y); if(y>canvas.height && Math.random()>.975){ drops[i]=0; } drops[i]++; }
         requestAnimationFrame(draw);
-      }
-      draw();
+      })();
     })();
   </script>
 </body>
