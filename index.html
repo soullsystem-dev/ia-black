@@ -6,7 +6,7 @@
 
   <title>Sistema Oculto – Acesso Sigiloso</title>
   <meta name="description" content="Um sistema oculto que fatura todos os dias no automático — sem aparecer." />
-  <meta name="theme-color" content="#ff2ea6" />
+  <meta name="theme-color" content="#ff2ea6" /> 
 
   <!-- Fonte -->
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet" />
@@ -85,10 +85,17 @@
       text-decoration:none;
       box-shadow:0 0 22px var(--accent-soft),0 0 42px var(--accent-soft);
       transition:transform .15s ease,box-shadow .15s ease;
+      animation:pulse 2s infinite;
     }
     .btn:hover{
       transform:translateY(-2px);
       box-shadow:0 0 30px rgba(255,46,166,.6),0 0 60px rgba(255,46,166,.35);
+    }
+
+    @keyframes pulse{
+      0%{box-shadow:0 0 22px var(--accent-soft),0 0 42px var(--accent-soft);}
+      50%{box-shadow:0 0 40px rgba(255,46,166,.8),0 0 80px rgba(255,46,166,.5);}
+      100%{box-shadow:0 0 22px var(--accent-soft),0 0 42px var(--accent-soft);}
     }
 
     .slots{
@@ -142,7 +149,7 @@
 
       <!-- CTA -->
       <a
-        href="https://wa.me/5547991473219?text=Oi%20Carina!%20T%C3%B4%20curiosa%20pra%20saber%20como%20esse%20m%C3%A9todo%20funciona%20na%20pr%C3%A1tica."
+        href="https://wa.me/5521988876516?text=Carina%2C%20preciso%20entender%20melhor%20do%20que%20se%20trata..."
         target="_blank" rel="noopener"
         class="btn"
         onclick="fbq && fbq('track','Lead');"
@@ -164,30 +171,28 @@
     const slotsEl = document.getElementById("slots-value");
     const CTA = document.querySelector(".btn");
 
-    // inicia em 20 (ou recupera do navegador)
     let slots = parseInt(localStorage.getItem("slotsValue") || "20", 10);
 
     function renderSlots() {
       if (slots < 0) slots = 0;
       slotsEl.textContent = slots;
 
+      const whatsMsg = encodeURIComponent("Carina, preciso entender melhor do que se trata...");
+      const whatsBase = "https://wa.me/5521988876516?text=" + whatsMsg;
+
       if (slots <= 0) {
         CTA.textContent = "ENTRAR NA LISTA";
-        CTA.setAttribute("href",
-          "https://wa.me/5547991473219?text=" + encodeURIComponent(
-            "Oi, Carina! Vi que as vagas de hoje esgotaram. Quero entrar na lista de prioridade para a próxima liberação."
-          )
-        );
-        CTA.setAttribute("onclick", "fbq && fbq('track','Lead');");
+        CTA.setAttribute("href", whatsBase);
       } else if (slots <= 3) {
         CTA.textContent = "ÚLTIMAS " + slots + " VAGAS — ATIVAR AGORA";
+        CTA.setAttribute("href", whatsBase);
       } else {
         CTA.textContent = "QUERO ATIVAR MEU SISTEMA AGORA";
+        CTA.setAttribute("href", whatsBase);
       }
     }
     function saveSlots(){ localStorage.setItem("slotsValue", String(slots)); }
 
-    // queda de slots (4–10s; mais rápido no fim; 25% chance de cair 2)
     function tickSlots(){
       if (slots <= 0) return;
       const drop = Math.random() < 0.25 ? 2 : 1;
@@ -196,36 +201,25 @@
       renderSlots();
 
       let nextMin, nextMax;
-      if (slots > 10) { nextMin = 6000; nextMax = 10000; }     // 6–10s
-      else if (slots > 3){ nextMin = 4000; nextMax = 7000; }   // 4–7s
-      else if (slots > 0){ nextMin = 3000; nextMax = 5000; }   // 3–5s (pressão final)
+      if (slots > 10) { nextMin = 6000; nextMax = 10000; }
+      else if (slots > 3){ nextMin = 4000; nextMax = 7000; }
+      else if (slots > 0){ nextMin = 3000; nextMax = 5000; }
       else { return; }
 
       const wait = nextMin + Math.random()*(nextMax - nextMin);
       setTimeout(tickSlots, wait);
     }
 
-    // reset diário opcional (comente a linha de slots=20 se não quiser reset)
-    (function resetDiario(){
-      const key = "slotsResetDate";
-      const hoje = new Date().toDateString();
-      const salvo = localStorage.getItem(key);
-      if (salvo !== hoje) {
-        // slots = 20; // <- descomente para resetar diariamente ao abrir a página
-        localStorage.setItem(key, hoje);
-        saveSlots();
-      }
-    })();
-
     renderSlots();
-    setTimeout(tickSlots, 3000 + Math.random()*3000); // primeira queda rápida (3–6s)
+    setTimeout(tickSlots, 3000 + Math.random()*3000);
 
     /* ===== MATRIX HACKER NEON (fundo) ===== */
     const canvas = document.getElementById("matrixCanvas");
     const ctx = canvas.getContext("2d");
     let W, H;
     function resize(){ W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
-    window.addEventListener("resize", resize); resize();
+    window.addEventListener("resize", () => { resize(); drops = Array(columns()).fill(1); });
+    resize();
 
     const letters = "01ABCDEFGHIJKLMNOPQRSTUVWXYZ$#@&%";
     let fontSize = 16;
@@ -236,7 +230,6 @@
       ctx.fillStyle = "rgba(0,0,0,0.08)";
       ctx.fillRect(0,0,W,H);
 
-      // variação sutil entre rosa e roxo para efeito neon
       const grad = ctx.createLinearGradient(0,0,W,0);
       grad.addColorStop(0, "#ff2ea6");
       grad.addColorStop(1, "#b400ff");
@@ -256,8 +249,6 @@
       }
       requestAnimationFrame(draw);
     }
-    // reconfigura colunas ao redimensionar
-    window.addEventListener("resize", () => { drops = Array(columns()).fill(1); });
     draw();
   </script>
 </body>
