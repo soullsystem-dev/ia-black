@@ -6,7 +6,7 @@
 
   <title>Sistema Oculto – Acesso Sigiloso</title>
   <meta name="description" content="Um sistema oculto que fatura todos os dias no automático — sem aparecer." />
-  <meta name="theme-color" content="#ff2ea6" /> 
+  <meta name="theme-color" content="#9b30ff" /> 
 
   <!-- Fonte -->
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet" />
@@ -28,12 +28,12 @@
 
   <style>
     :root{
-      --accent:#ff2ea6;
-      --accent-soft:rgba(255,46,166,.22);
+      --accent:#9b30ff; /* Roxo neon */
+      --accent-soft:rgba(155,48,255,.25);
       --bg:#07050A;
       --text:#f4f4f5;
       --muted:#b9b3c5;
-      --on-accent:#0b0b0b;
+      --on-accent:#ffffff;
     }
     *{box-sizing:border-box;margin:0;padding:0}
     body{
@@ -53,7 +53,6 @@
     }
     .content{width:100%;max-width:700px;z-index:1;position:relative}
 
-    /* Fundo: códigos hacker neon */
     #matrixCanvas{
       position:fixed;
       inset:0;
@@ -62,12 +61,7 @@
       background:#000;
     }
 
-    .proof-img{
-      margin-bottom:12px;
-      border-radius:18px;
-      overflow:hidden;
-      box-shadow:0 0 22px var(--accent-soft),0 0 60px rgba(255,46,166,.18);
-    }
+    .proof-img{margin-bottom:12px;border-radius:18px;overflow:hidden;box-shadow:0 0 22px var(--accent-soft),0 0 60px rgba(155,48,255,.2);}
     .proof-img img{width:100%;height:auto;display:block}
     .proof-caption{font-size:13px;color:var(--muted);margin-bottom:18px}
 
@@ -89,12 +83,11 @@
     }
     .btn:hover{
       transform:translateY(-2px);
-      box-shadow:0 0 30px rgba(255,46,166,.6),0 0 60px rgba(255,46,166,.35);
+      box-shadow:0 0 40px rgba(155,48,255,.7),0 0 80px rgba(155,48,255,.5);
     }
-
     @keyframes pulse{
       0%{box-shadow:0 0 22px var(--accent-soft),0 0 42px var(--accent-soft);}
-      50%{box-shadow:0 0 40px rgba(255,46,166,.8),0 0 80px rgba(255,46,166,.5);}
+      50%{box-shadow:0 0 40px rgba(155,48,255,.9),0 0 80px rgba(155,48,255,.6);}
       100%{box-shadow:0 0 22px var(--accent-soft),0 0 42px var(--accent-soft);}
     }
 
@@ -123,18 +116,15 @@
   </style>
 </head>
 <body>
-  <!-- Meta Pixel (noscript) -->
   <noscript>
     <img height="1" width="1" style="display:none"
          src="https://www.facebook.com/tr?id=664309226562112&ev=PageView&noscript=1" />
   </noscript>
 
-  <!-- Fundo: códigos hacker -->
   <canvas id="matrixCanvas"></canvas>
 
   <div class="wrap">
     <div class="content">
-      <!-- Print -->
       <div class="proof-img">
         <img src="print-painel.jpg" alt="Comprovante real do painel" />
       </div>
@@ -143,13 +133,11 @@
         <em>Resultados variam conforme aplicação.</em>
       </div>
 
-      <!-- Texto -->
       <h1 class="title">⚡ Um sistema oculto que fatura todos os dias no automático — sem aparecer.</h1>
       <p class="subtitle">Receba agora o acesso exclusivo direto no WhatsApp.</p>
 
-      <!-- CTA -->
       <a
-        href="https://wa.me/5521988876516?text=Carina%2C%20preciso%20entender%20melhor%20do%20que%20se%20trata..."
+        href="https://wa.me/5547999860512?text=Oi%20Carina!%20T%C3%B4%20curiosa%20pra%20saber%20como%20esse%20m%C3%A9todo%20funciona%20na%20pr%C3%A1tica."
         target="_blank" rel="noopener"
         class="btn"
         onclick="fbq && fbq('track','Lead');"
@@ -157,7 +145,6 @@
         QUERO ATIVAR MEU SISTEMA AGORA
       </a>
 
-      <!-- Contador -->
       <div class="slots">
         Acessos disponíveis <span class="value" id="slots-value">20</span>
       </div>
@@ -167,7 +154,6 @@
   </div>
 
   <script>
-    /* ===== CONTADOR DE VAGAS (rápido) ===== */
     const slotsEl = document.getElementById("slots-value");
     const CTA = document.querySelector(".btn");
 
@@ -177,8 +163,8 @@
       if (slots < 0) slots = 0;
       slotsEl.textContent = slots;
 
-      const whatsMsg = encodeURIComponent("Carina, preciso entender melhor do que se trata...");
-      const whatsBase = "https://wa.me/5521988876516?text=" + whatsMsg;
+      const whatsMsg = encodeURIComponent("Oi Carina! Tô curiosa pra saber como esse método funciona na prática.");
+      const whatsBase = "https://wa.me/5547999860512?text=" + whatsMsg;
 
       if (slots <= 0) {
         CTA.textContent = "ENTRAR NA LISTA";
@@ -213,7 +199,6 @@
     renderSlots();
     setTimeout(tickSlots, 3000 + Math.random()*3000);
 
-    /* ===== MATRIX HACKER NEON (fundo) ===== */
     const canvas = document.getElementById("matrixCanvas");
     const ctx = canvas.getContext("2d");
     let W, H;
@@ -231,11 +216,11 @@
       ctx.fillRect(0,0,W,H);
 
       const grad = ctx.createLinearGradient(0,0,W,0);
-      grad.addColorStop(0, "#ff2ea6");
-      grad.addColorStop(1, "#b400ff");
+      grad.addColorStop(0, "#9b30ff");
+      grad.addColorStop(1, "#ff66cc");
       ctx.fillStyle = grad;
-      ctx.shadowColor = "#ff2ea6";
-      ctx.shadowBlur = 10;
+      ctx.shadowColor = "#9b30ff";
+      ctx.shadowBlur = 12;
       ctx.font = fontSize + "px monospace";
 
       for(let i=0;i<drops.length;i++){
