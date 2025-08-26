@@ -17,7 +17,7 @@
       overflow-x:hidden;
     }
 
-    /* Tela inteira fundo Matrix */
+    /* Fundo Matrix */
     canvas#matrix {
       position:fixed;
       top:0;left:0;
@@ -42,7 +42,7 @@
       box-shadow:0 0 10px var(--neon);
     }
 
-    /* Hero */
+    /* Tela inicial */
     .hero {
       text-align:center;
       margin-top:20vh;
@@ -95,8 +95,8 @@
 
     /* Opções do quiz */
     .answer {
-      background: rgba(21,255,149,0.78); /* VERDE NEON translúcido */
-      color:#000;                        /* LETRAS PRETAS */
+      background: rgba(21,255,149,0.78); /* verde neon translúcido */
+      color:#000;                        /* texto preto forte */
       font-weight:900;
       border-radius:14px;
       padding:14px;
@@ -118,12 +118,14 @@
 
   <div id="hud"> <span id="xp">0 XP</span> | <span id="lvl">LVL 1</span> </div>
 
+  <!-- Tela inicial -->
   <section id="intro" class="hero">
     <h1>INICIANDO PROTOCOLO BLACK...</h1>
     <p>Sistema carregado. Pressione para continuar.</p>
     <button id="startBtn" class="btn">Iniciar Protocolo</button>
   </section>
 
+  <!-- Quiz -->
   <form id="quiz" class="hidden">
     <div class="card">
       <h3>Qual seu principal objetivo agora?</h3>
@@ -135,7 +137,7 @@
   </form>
 
 <script>
-  // ===== Efeito Matrix =====
+  // ===== Matrix Effect =====
   const canvas=document.getElementById("matrix");
   const ctx=canvas.getContext("2d");
   canvas.height=window.innerHeight; canvas.width=window.innerWidth;
@@ -156,7 +158,7 @@
   }
   setInterval(draw,40);
 
-  // ===== Game Logic =====
+  // ===== XP e Quiz =====
   let xp=0, lvl=1;
   function addXP(n){
     xp+=n; if(xp>=lvl*100){ lvl++; }
