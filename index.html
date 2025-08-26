@@ -167,14 +167,53 @@
   <div class="wrap">
     <main class="shell" role="main">
       <!-- HERO -->
-      <header class="card">
-        <h1 class="title">⚡ Você está prestes a desbloquear o mecanismo oculto que fatura todos os dias — sem aparecer.</h1>
-        <p class="subtitle">Responda 2 perguntas rápidas e receba o acesso no WhatsApp. Simples, sigiloso e direto do seu celular.</p>
-        <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:10px">
-          <button class="btn btn-primary" id="startBtn">COMEÇAR AGORA</button>
-          <span class="muted" style="align-self:center">⏳ Acesso liberado para um grupo limitado.</span>
+      <header class="card hero-impact">
+  <div class="hero-top">
+    <span class="badge">Acesso restrito</span>
+    <h1 class="title xl">
+      ⚡ Ative agora o <u>mecanismo oculto</u> que pode faturar todos os dias — sem aparecer.
+    </h1>
+    <p class="subtitle">
+      Responda 2 perguntas rápidas e receba o acesso no WhatsApp. Simples, sigiloso e direto do seu celular.
+    </p>
+    <div class="cta-row">
+      <button class="btn btn-primary" id="startBtn">COMEÇAR AGORA</button>
+      <span class="muted">⏳ Vagas liberadas hoje.</span>
+    </div>
+  </div>
+
+  <!-- PROVA SOCIAL: notificações (use prints reais depois, se quiser troco por img) -->
+  <aside class="proofs">
+    <div class="live-counter">
+      <strong id="counter-num">37</strong> vendas nas últimas 24h
+    </div>
+
+    <!-- “Comprovante/recibo” estilo clean -->
+    <div class="receipt">
+      <div class="r-hd">
+        <div>
+          <div class="r-title">Exemplo ilustrativo</div>
+          <div class="r-sub">Mecanismo de Vendas Automáticas</div>
         </div>
-      </header>
+        <div class="r-total">R$ <span id="r-valor">297,00</span></div>
+      </div>
+      <div class="r-row">
+        <span>Horário</span><span id="r-hora">10:42</span>
+      </div>
+      <div class="r-row">
+        <span>Método</span><span>PIX aprovado</span>
+      </div>
+      <div class="r-row">
+        <span>Status</span><span class="ok">Confirmado</span>
+      </div>
+      <div class="r-foot">* Substitua por seus prints reais quando quiser</div>
+    </div>
+  </aside>
+
+  <!-- toasts animados (fake-live; troque por webhooks se quiser real) -->
+  <div class="toasts" aria-live="polite"></div>
+</header>
+
 
       <!-- QUIZ -->
       <section id="quiz" class="card" style="display:none">
