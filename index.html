@@ -1,49 +1,156 @@
-/* --- HOTFIX VISUAL E COMPORTAMENTO (mínimo) --- */
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>IA Black • Protocolo</title>
+  <meta name="description" content="Protocolo Black — intro + quiz com XP, efeito matrix, preserva UTMs e envia respostas ao checkout." />
 
-/* garante que "hidden" realmente esconda */
-.hidden { display: none !important; }
+  <!-- FONTE (pode remover se já usa outra) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600..900&display=swap" rel="stylesheet">
 
-/* menos glow no título/hero e mais respiro */
-.hero h1{
-  text-shadow: 0 0 8px rgba(21,255,149,.35), 0 0 16px rgba(21,255,149,.25) !important;
-  letter-spacing:.04em;
-}
-.hero { margin-top: 18vh; margin-bottom: 6vh; }
+  <style>
+    :root{
+      --neon:#15ff95;
+      --neon2:#07b67a;
+      --border:#0aa967;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:"Orbitron",system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial,sans-serif;
+      background:#000;
+      color:#e8fff4;
+      overflow-x:hidden;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
 
-/* cartão mais escuro para ler melhor */
-.card{
-  background: rgba(0,0,0,.72) !important;
-  border: 1px solid rgba(21,255,149,.22) !important;
-  box-shadow: 0 10px 28px rgba(0,0,0,.55) !important;
-  border-radius: 18px !important;
-}
-.card h3{ margin-bottom: 14px !important; }
+    /* ===== fundo matrix */
+    canvas#matrix{
+      position:fixed; inset:0; width:100%; height:100%;
+      z-index:-1; background:#000;
+    }
 
-/* botão "Iniciar Protocolo": neon limpo + letra preta */
-.btn#startBtn,
-#startBtn.btn {
-  background: #15ff95 !important;
-  color: #000 !important;
-  box-shadow: 0 0 14px rgba(21,255,149,.35) !important;
-  border: 1px solid #0adf87 !important;
-}
+    /* ===== HUD XP/LVL */
+    #hud{
+      position:fixed; top:14px; left:50%; transform:translateX(-50%);
+      display:inline-flex; gap:10px; align-items:center;
+      padding:8px 16px; font-size:13px; font-weight:800; letter-spacing:.06em;
+      color:var(--neon);
+      background:rgba(0,0,0,.55);
+      border:1px solid rgba(21,255,149,.32);
+      border-radius:12px;
+      box-shadow:0 0 8px rgba(21,255,149,.25);
+      backdrop-filter: blur(4px);
+    }
 
-/* opções do quiz: verde neon (sólido, sem excesso), texto preto */
-#quiz .answer{
-  background: #15ff95 !important;           /* verde neon sólido (legível) */
-  color: #000 !important;                    /* letras pretas fortes */
-  font-weight: 900 !important;
-  border: 1px solid #09c773 !important;
-  box-shadow: 0 2px 0 #0aa967 inset, 0 0 10px rgba(21,255,149,.25) !important;
-  border-radius: 14px !important;
-  padding: 14px !important;
-  filter: none !important;
-  text-shadow: none !important;
-}
-#quiz .answer:hover{ filter: brightness(1.05) !important; transform: translateY(-1px); }
+    /* ===== seção inicial */
+    .hero{
+      display:grid; place-items:center;
+      min-height:70svh; padding:64px 20px 16px;
+      text-align:center;
+    }
+    .hero h1{
+      font-size: clamp(28px,6vw,56px);
+      color:var(--neon);
+      margin:0 0 14px;
+      text-shadow:
+        0 0 8px rgba(21,255,149,.35),
+        0 0 16px rgba(21,255,149,.25);
+      letter-spacing:.06em; font-weight:900;
+    }
+    .hero p{opacity:.9; margin:0 0 26px; font-size:clamp(14px,3.8vw,18px)}
 
-/* HUD mais discreto */
-#hud{
-  box-shadow: 0 0 8px rgba(21,255,149,.25) !important;
-  border-color: rgba(21,255,149,.28) !important;
-}
+    /* ===== botões */
+    .btn{
+      appearance:none; border:1px solid var(--border);
+      background: var(--neon); color:#000; /* letras pretas */
+      border-radius:18px; padding:14px 22px; font-weight:900;
+      text-transform:uppercase; letter-spacing:.08em; cursor:pointer;
+      box-shadow:0 0 14px rgba(21,255,149,.35);
+      transition:transform .15s, filter .15s;
+    }
+    .btn:hover{ filter:brightness(1.06); transform:translateY(-1px) }
+    .btn:active{ transform:translateY(0) }
+
+    /* ===== container das perguntas */
+    .card{
+      max-width:720px; margin:24px auto; padding:22px 18px;
+      background:rgba(0,0,0,.72);
+      border:1px solid rgba(21,255,149,.22);
+      border-radius:18px;
+      box-shadow:0 12px 28px rgba(0,0,0,.55);
+    }
+    .card h3{
+      margin:4px 0 14px;
+      color:var(--neon); text-shadow:0 0 6px rgba(21,255,149,.4);
+      font-size:clamp(18px,5vw,24px);
+    }
+
+    /* ===== opções: VERDE NEON + TEXTO PRETO (pedido) */
+    .answer{
+      display:block; width:100%; text-align:center; cursor:pointer;
+      margin:10px 0; padding:14px 16px; border-radius:14px;
+      background:#15ff95;              /* verde neon sólido (legível) */
+      color:#000; font-weight:900;      /* letras pretas fortes */
+      border:1px solid var(--border);
+      box-shadow: 0 2px 0 #0aa967 inset, 0 0 10px rgba(21,255,149,.22);
+      text-shadow:none;                 /* sem brilho no texto preto */
+      transition:transform .12s, filter .12s;
+    }
+    .answer:hover{ filter:brightness(1.05); transform:translateY(-1px) }
+
+    /* navegação da etapa */
+    .nav{
+      display:flex; justify-content:space-between; margin-top:8px;
+      font-size:13px; color:rgba(255,255,255,.7);
+    }
+    .nav button{
+      background:none; border:none; color:rgba(255,255,255,.7);
+      text-decoration:underline; cursor:pointer; padding:6px 8px;
+    }
+    .nav button[disabled]{opacity:.35; pointer-events:none}
+
+    /* pequenos utilitários */
+    .hidden{ display:none !important }
+    footer{ text-align:center; color:#8ddfbc; opacity:.45; padding:40px 0 60px; font-size:12px }
+  </style>
+
+  <!-- Meta Pixel básico (opcional): ?pixel=ID ou troque o REPLACE -->
+  <script>
+    !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+    n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
+    (function(){const q=new URLSearchParams(location.search);const PIXEL=q.get('pixel')||'REPLACE_WITH_PIXEL_ID'; try{fbq('init',PIXEL);fbq('track','PageView');}catch(e){}})();
+  </script>
+</head>
+<body>
+  <!-- fundo matrix -->
+  <canvas id="matrix"></canvas>
+
+  <!-- HUD -->
+  <div id="hud"><span id="xp">0 XP</span>&nbsp;|&nbsp;<span id="lvl">LVL 1</span></div>
+
+  <!-- TELA INICIAL -->
+  <section id="intro" class="hero">
+    <div class="card" style="background:rgba(0,0,0,.62)">
+      <h1>INICIANDO PROTOCOLO BLACK...</h1>
+      <p>Sistema carregado. Pressione para continuar.</p>
+      <button id="startBtn" class="btn">Iniciar Protocolo</button>
+    </div>
+  </section>
+
+  <!-- QUIZ -->
+  <form id="quiz" class="hidden" autocomplete="off">
+    <div class="card" data-step="0">
+      <h3>Qual seu principal objetivo agora?</h3>
+      <button type="button" class="answer" data-a="Renda extra imediata">Renda extra imediata</button>
+      <button type="button" class="answer" data-a="Estruturar vendas no sigilo">Estruturar vendas no sigilo</button>
+      <button type="button" class="answer" data-a="Validar um produto">Validar um produto</button>
+      <button type="button" class="answer" data-a="Escalar o que já vende">Escalar o que já vende</button>
+      <div class="nav"><button type="button" class="prev" disabled>Voltar</b
