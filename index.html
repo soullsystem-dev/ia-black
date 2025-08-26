@@ -53,6 +53,7 @@
     }
     .content{width:100%;max-width:700px;z-index:1;position:relative}
 
+    /* Fundo: códigos hacker neon */
     #matrixCanvas{
       position:fixed;
       inset:0;
@@ -61,7 +62,12 @@
       background:#000;
     }
 
-    .proof-img{margin-bottom:12px;border-radius:18px;overflow:hidden;box-shadow:0 0 22px var(--accent-soft),0 0 60px rgba(155,48,255,.2);}
+    .proof-img{
+      margin-bottom:12px;
+      border-radius:18px;
+      overflow:hidden;
+      box-shadow:0 0 22px var(--accent-soft),0 0 60px rgba(155,48,255,.20);
+    }
     .proof-img img{width:100%;height:auto;display:block}
     .proof-caption{font-size:13px;color:var(--muted);margin-bottom:18px}
 
@@ -116,15 +122,18 @@
   </style>
 </head>
 <body>
+  <!-- Meta Pixel (noscript) -->
   <noscript>
     <img height="1" width="1" style="display:none"
          src="https://www.facebook.com/tr?id=664309226562112&ev=PageView&noscript=1" />
   </noscript>
 
+  <!-- Fundo: códigos hacker -->
   <canvas id="matrixCanvas"></canvas>
 
   <div class="wrap">
     <div class="content">
+      <!-- Print -->
       <div class="proof-img">
         <img src="print-painel.jpg" alt="Comprovante real do painel" />
       </div>
@@ -133,9 +142,11 @@
         <em>Resultados variam conforme aplicação.</em>
       </div>
 
+      <!-- Texto -->
       <h1 class="title">⚡ Um sistema oculto que fatura todos os dias no automático — sem aparecer.</h1>
       <p class="subtitle">Receba agora o acesso exclusivo direto no WhatsApp.</p>
 
+      <!-- CTA -->
       <a
         href="https://wa.me/5547999860511?text=Oi%20Carina!%20T%C3%B4%20curiosa%20pra%20saber%20como%20esse%20m%C3%A9todo%20funciona%20na%20pr%C3%A1tica."
         target="_blank" rel="noopener"
@@ -145,6 +156,7 @@
         QUERO ATIVAR MEU SISTEMA AGORA
       </a>
 
+      <!-- Contador -->
       <div class="slots">
         Acessos disponíveis <span class="value" id="slots-value">20</span>
       </div>
@@ -154,6 +166,7 @@
   </div>
 
   <script>
+    /* ===== CONTADOR DE VAGAS (rápido) ===== */
     const slotsEl = document.getElementById("slots-value");
     const CTA = document.querySelector(".btn");
 
@@ -164,7 +177,7 @@
       slotsEl.textContent = slots;
 
       const whatsMsg = encodeURIComponent("Oi Carina! Tô curiosa pra saber como esse método funciona na prática.");
-      const whatsBase = "https://wa.me/5547999860512?text=" + whatsMsg;
+      const whatsBase = "https://wa.me/5547999860511?text=" + whatsMsg;
 
       if (slots <= 0) {
         CTA.textContent = "ENTRAR NA LISTA";
@@ -187,9 +200,9 @@
       renderSlots();
 
       let nextMin, nextMax;
-      if (slots > 10) { nextMin = 6000; nextMax = 10000; }
-      else if (slots > 3){ nextMin = 4000; nextMax = 7000; }
-      else if (slots > 0){ nextMin = 3000; nextMax = 5000; }
+      if (slots > 10) { nextMin = 6000; nextMax = 10000; }   // 6–10s
+      else if (slots > 3){ nextMin = 4000; nextMax = 7000; } // 4–7s
+      else if (slots > 0){ nextMin = 3000; nextMax = 5000; } // 3–5s
       else { return; }
 
       const wait = nextMin + Math.random()*(nextMax - nextMin);
@@ -197,8 +210,9 @@
     }
 
     renderSlots();
-    setTimeout(tickSlots, 3000 + Math.random()*3000);
+    setTimeout(tickSlots, 3000 + Math.random()*3000); // primeira queda 3–6s
 
+    /* ===== MATRIX HACKER NEON (fundo) ===== */
     const canvas = document.getElementById("matrixCanvas");
     const ctx = canvas.getContext("2d");
     let W, H;
@@ -215,6 +229,7 @@
       ctx.fillStyle = "rgba(0,0,0,0.08)";
       ctx.fillRect(0,0,W,H);
 
+      // gradiente roxo -> rosa para efeito neon
       const grad = ctx.createLinearGradient(0,0,W,0);
       grad.addColorStop(0, "#9b30ff");
       grad.addColorStop(1, "#ff66cc");
