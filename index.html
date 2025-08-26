@@ -51,14 +51,15 @@
       justify-content:center;
       padding:24px;
     }
-    .content{width:100%;max-width:700px;z-index:1}
+    .content{width:100%;max-width:700px;z-index:1;position:relative}
 
-    /* Fundo chuva de dinheiro */
-    #moneyCanvas{
+    /* Fundo código hacker */
+    #matrixCanvas{
       position:fixed;
       inset:0;
       z-index:0;
       pointer-events:none;
+      background:#000;
     }
 
     .proof-img{
@@ -121,7 +122,7 @@
          src="https://www.facebook.com/tr?id=664309226562112&ev=PageView&noscript=1"/>
   </noscript>
 
-  <canvas id="moneyCanvas"></canvas>
+  <canvas id="matrixCanvas"></canvas>
 
   <div class="wrap">
     <div class="content">
@@ -173,33 +174,38 @@
       if(slots>0) decreaseSlots();
     }, 25000 + Math.random()*20000); // a cada 25–45s
 
-    // CHUVA DE DINHEIRO
-    const canvas=document.getElementById("moneyCanvas");
+    // MATRIX HACKER NEON
+    const canvas=document.getElementById("matrixCanvas");
     const ctx=canvas.getContext("2d");
-    let W,H; 
+    let W,H;
     function resize(){W=canvas.width=window.innerWidth; H=canvas.height=window.innerHeight}
     window.addEventListener("resize",resize); resize();
 
-    const notes=[];
-    const noteImg=new Image();
-    noteImg.src="https://i.ibb.co/V2HG6Gh/note100.png"; // exemplo de nota PNG
+    const letters="01ABCDEFGHIJKLMNOPQRSTUVWXYZ$#@&%";
+    const fontSize=16; 
+    const columns=Math.floor(W/fontSize);
+    const drops=Array(columns).fill(1);
 
-    function initNotes(){
-      for(let i=0;i<12;i++){
-        notes.push({x:Math.random()*W,y:Math.random()*H,s:0.5+Math.random()*0.5,vy:1+Math.random()*2});
+    function draw(){
+      ctx.fillStyle="rgba(0,0,0,0.08)";
+      ctx.fillRect(0,0,W,H);
+      ctx.fillStyle="#ff2ea6"; // cor neon
+      ctx.shadowColor="#ff2ea6";
+      ctx.shadowBlur=10;
+      ctx.font=fontSize+"px monospace";
+
+      for(let i=0;i<drops.length;i++){
+        const text=letters.charAt(Math.floor(Math.random()*letters.length));
+        const x=i*fontSize;
+        const y=drops[i]*fontSize;
+        ctx.fillText(text,x,y);
+
+        if(y>H && Math.random()>0.975){ drops[i]=0; }
+        drops[i]++;
       }
+      requestAnimationFrame(draw);
     }
-    function drawNotes(){
-      ctx.clearRect(0,0,W,H);
-      notes.forEach(n=>{
-        ctx.globalAlpha=0.3;
-        ctx.drawImage(noteImg,n.x,n.y,80*n.s,40*n.s);
-        n.y+=n.vy;
-        if(n.y>H){n.y=-50;n.x=Math.random()*W;}
-      });
-      requestAnimationFrame(drawNotes);
-    }
-    noteImg.onload=function(){initNotes();drawNotes();}
+    draw();
   </script>
 </body>
 </html>
