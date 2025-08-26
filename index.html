@@ -1,296 +1,364 @@
 <!doctype html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>IA Black • Protocolo</title>
-  <meta name="description" content="Protocolo Black — intro + quiz com XP, efeito matrix, preserva UTMs e envia respostas ao checkout." />
 
-  <!-- FONTE (pode remover se já usa outra) -->
+  <title>Mecanismo de Vendas Automáticas – Acesso Sigiloso</title>
+  <meta name="description" content="Ative seu mecanismo oculto de vendas. Responda 2 perguntas e receba o acesso no WhatsApp. Simples, sigiloso e direto do seu celular.">
+  <meta property="og:title" content="Mecanismo de Vendas Automáticas – Acesso Sigiloso">
+  <meta property="og:description" content="Ative seu mecanismo oculto de vendas. Responda 2 perguntas e receba o acesso no WhatsApp.">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="/og-cover.png"><!-- TODO: opcional -->
+  <meta name="theme-color" content="#ff2ea6">
+
+  <!-- Fonte -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600..900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800&display=swap" rel="stylesheet">
 
   <style>
     :root{
-      --neon:#15ff95;
-      --neon2:#07b67a;
-      --border:#0aa967;
+      --accent: #ff2ea6;                  /* rosa neon principal */
+      --accent-soft: rgba(255,46,166,.22);
+      --accent-strong: rgba(255,46,166,.45);
+      --bg-1:#000; --bg-2:#0b0b0b; --bg-3:#101010;
+      --text:#f3f3f3; --muted:#bcbcbc;
+      --card: rgba(255,255,255,0.06);
+      --stroke: rgba(255,255,255,0.08);
+      --on-accent: #0b0b0b;               /* texto no botão rosa */
     }
-    *{box-sizing:border-box}
-    html,body{height:100%}
+    *{ box-sizing:border-box }
+    html,body{ height:100%; }
     body{
       margin:0;
-      font-family:"Orbitron",system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial,sans-serif;
-      background:#000;
-      color:#e8fff4;
+      font-family:'Montserrat',system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(1200px 800px at 10% -10%, var(--bg-2) 0%, var(--bg-1) 60%),
+        radial-gradient(900px 600px at 100% 110%, var(--bg-3) 0%, var(--bg-1) 60%),
+        #000;
       overflow-x:hidden;
-      -webkit-font-smoothing:antialiased;
-      -moz-osx-font-smoothing:grayscale;
     }
 
-    /* ===== fundo matrix */
-    canvas#matrix{
-      position:fixed; inset:0; width:100%; height:100%;
-      z-index:-1; background:#000;
+    /* Canvas do "código caindo" ao fundo */
+    #matrix{
+      position: fixed; inset:0; z-index:0; pointer-events:none;
+      filter: drop-shadow(0 0 6px #ff6ecf);
+      opacity:.7;
     }
 
-    /* ===== HUD XP/LVL */
-    #hud{
-      position:fixed; top:14px; left:50%; transform:translateX(-50%);
-      display:inline-flex; gap:10px; align-items:center;
-      padding:8px 16px; font-size:13px; font-weight:800; letter-spacing:.06em;
-      color:var(--neon);
-      background:rgba(0,0,0,.55);
-      border:1px solid rgba(21,255,149,.32);
-      border-radius:12px;
-      box-shadow:0 0 8px rgba(21,255,149,.25);
-      backdrop-filter: blur(4px);
+    /* Container principal */
+    .wrap{
+      position: relative; z-index:1;
+      min-height: 100dvh;
+      display:flex; align-items:center; justify-content:center;
+      padding: 32px 16px;
+    }
+    .shell{
+      width:100%; max-width: 760px;
+      display:flex; flex-direction:column; gap:18px;
+      background: var(--card);
+      border:1px solid var(--stroke);
+      border-radius: 18px;
+      padding: 22px 18px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 0 18px var(--accent-soft);
     }
 
-    /* ===== seção inicial */
-    .hero{
-      display:grid; place-items:center;
-      min-height:70svh; padding:64px 20px 16px;
-      text-align:center;
+    /* Hero */
+    .title{
+      font-size: clamp(24px, 4.5vw, 38px);
+      line-height: 1.15;
+      font-weight: 800;
+      letter-spacing:.2px;
+      text-shadow: 0 0 14px var(--accent-soft);
     }
-    .hero h1{
-      font-size: clamp(28px,6vw,56px);
-      color:var(--neon);
-      margin:0 0 14px;
-      text-shadow:
-        0 0 8px rgba(21,255,149,.35),
-        0 0 16px rgba(21,255,149,.25);
-      letter-spacing:.06em; font-weight:900;
+    .subtitle{
+      color: var(--muted);
+      font-size: clamp(14px, 2.6vw, 16px);
+      margin-top:-4px;
     }
-    .hero p{opacity:.9; margin:0 0 26px; font-size:clamp(14px,3.8vw,18px)}
 
-    /* ===== botões */
+    /* Botões */
     .btn{
-      appearance:none; border:1px solid var(--border);
-      background: var(--neon); color:#000; /* letras pretas */
-      border-radius:18px; padding:14px 22px; font-weight:900;
-      text-transform:uppercase; letter-spacing:.08em; cursor:pointer;
-      box-shadow:0 0 14px rgba(21,255,149,.35);
-      transition:transform .15s, filter .15s;
+      display:inline-flex; align-items:center; justify-content:center;
+      gap:10px; border:1px solid var(--stroke);
+      border-radius: 999px; padding: 14px 20px;
+      font-weight: 800; letter-spacing:.2px; cursor:pointer;
+      background: #141414; color:#fff;
+      transition: transform .15s ease, box-shadow .15s ease, background .15s ease;
     }
-    .btn:hover{ filter:brightness(1.06); transform:translateY(-1px) }
-    .btn:active{ transform:translateY(0) }
+    .btn:hover{ transform: translateY(-1px); box-shadow: 0 0 18px var(--accent-soft); }
+    .btn-primary{
+      background: var(--accent); color: var(--on-accent); border-color: transparent;
+      box-shadow: 0 0 18px var(--accent-soft), 0 0 42px var(--accent-soft);
+    }
+    .btn-primary:hover{ box-shadow: 0 0 22px var(--accent-strong), 0 0 60px var(--accent-strong); }
 
-    /* ===== container das perguntas */
+    /* Opções do quiz (texto preto em fundo claro) */
+    .quiz-option{
+      width:100%; text-align:left;
+      background: rgba(255,255,255,.92);
+      color:#000; border:1px solid rgba(0,0,0,.08);
+      border-radius: 14px; padding: 12px 14px;
+      font-weight: 700; cursor: pointer;
+      transition: transform .12s ease, box-shadow .12s ease, background .12s ease;
+      margin-bottom: 10px;
+    }
+    .quiz-option:hover{
+      background:#fff; transform: translateY(-1px);
+      box-shadow: 0 0 18px var(--accent-soft);
+    }
+
+    /* Cartões */
     .card{
-      max-width:720px; margin:24px auto; padding:22px 18px;
-      background:rgba(0,0,0,.72);
-      border:1px solid rgba(21,255,149,.22);
-      border-radius:18px;
-      box-shadow:0 12px 28px rgba(0,0,0,.55);
-    }
-    .card h3{
-      margin:4px 0 14px;
-      color:var(--neon); text-shadow:0 0 6px rgba(21,255,149,.4);
-      font-size:clamp(18px,5vw,24px);
+      background: var(--card);
+      border:1px solid var(--stroke);
+      border-radius: 14px;
+      padding: 14px;
     }
 
-    /* ===== opções: VERDE NEON + TEXTO PRETO (pedido) */
-    .answer{
-      display:block; width:100%; text-align:center; cursor:pointer;
-      margin:10px 0; padding:14px 16px; border-radius:14px;
-      background:#15ff95;              /* verde neon sólido (legível) */
-      color:#000; font-weight:900;      /* letras pretas fortes */
-      border:1px solid var(--border);
-      box-shadow: 0 2px 0 #0aa967 inset, 0 0 10px rgba(21,255,149,.22);
-      text-shadow:none;                 /* sem brilho no texto preto */
-      transition:transform .12s, filter .12s;
+    /* Score pill fixo no topo */
+    .score-pill{
+      position: fixed; z-index:2;
+      top: 14px; right: 14px;
+      background: linear-gradient(90deg, #1a1a1a, #0f0f0f);
+      border: 1px solid var(--stroke);
+      color: #fff; padding: 8px 14px;
+      border-radius: 999px; font-weight: 800;
+      box-shadow: 0 0 16px var(--accent-soft);
+      font-size: 14px;
     }
-    .answer:hover{ filter:brightness(1.05); transform:translateY(-1px) }
 
-    /* navegação da etapa */
-    .nav{
-      display:flex; justify-content:space-between; margin-top:8px;
-      font-size:13px; color:rgba(255,255,255,.7);
+    /* Status/loader entre passos */
+    .status{
+      display:none; gap:8px; align-items:center;
+      color: var(--muted); font-size: 14px;
     }
-    .nav button{
-      background:none; border:none; color:rgba(255,255,255,.7);
-      text-decoration:underline; cursor:pointer; padding:6px 8px;
+    .dot{
+      width:8px; height:8px; border-radius:50%;
+      background: var(--accent);
+      box-shadow: 0 0 10px var(--accent-soft);
+      animation: blink 1s infinite alternate;
     }
-    .nav button[disabled]{opacity:.35; pointer-events:none}
+    .dot:nth-child(2){ animation-delay:.2s }
+    .dot:nth-child(3){ animation-delay:.4s }
+    @keyframes blink{ from{opacity:.2} to{opacity:1} }
 
-    /* pequenos utilitários */
-    .hidden{ display:none !important }
-    footer{ text-align:center; color:#8ddfbc; opacity:.45; padding:40px 0 60px; font-size:12px }
+    /* Regras responsivas simples */
+    @media (min-width: 860px){
+      .shell{ padding: 28px 22px; }
+    }
+
+    /* Micro-separadores */
+    .muted{ color:var(--muted) }
+    .sep{ height:1px; background:var(--stroke); margin:6px 0 10px }
   </style>
-
-  <!-- Meta Pixel básico (opcional): ?pixel=ID ou troque o REPLACE -->
-  <script>
-    !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-    n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
-    n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
-    t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
-    (function(){const q=new URLSearchParams(location.search);const PIXEL=q.get('pixel')||'REPLACE_WITH_PIXEL_ID'; try{fbq('init',PIXEL);fbq('track','PageView');}catch(e){}})();
-  </script>
 </head>
 <body>
-  <!-- fundo matrix -->
+  <!-- Canvas do efeito "códigos caindo" -->
   <canvas id="matrix"></canvas>
 
-  <!-- HUD -->
-  <div id="hud"><span id="xp">0 XP</span>&nbsp;|&nbsp;<span id="lvl">LVL 1</span></div>
+  <!-- Pontuação -->
+  <div id="score-pill" class="score-pill">Pontos: 0</div>
 
-  <!-- TELA INICIAL -->
-  <section id="intro" class="hero">
-    <div class="card" style="background:rgba(0,0,0,.62)">
-      <h1>INICIANDO PROTOCOLO BLACK...</h1>
-      <p>Sistema carregado. Pressione para continuar.</p>
-      <button id="startBtn" class="btn">Iniciar Protocolo</button>
-    </div>
-  </section>
+  <!-- Conteúdo -->
+  <div class="wrap">
+    <main class="shell" role="main">
+      <!-- HERO -->
+      <header class="card">
+        <h1 class="title">⚡ Você está prestes a desbloquear o mecanismo oculto que fatura todos os dias — sem aparecer.</h1>
+        <p class="subtitle">Responda 2 perguntas rápidas e receba o acesso no WhatsApp. Simples, sigiloso e direto do seu celular.</p>
+        <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:10px">
+          <button class="btn btn-primary" id="startBtn">COMEÇAR AGORA</button>
+          <span class="muted" style="align-self:center">⏳ Acesso liberado para um grupo limitado.</span>
+        </div>
+      </header>
 
-  <!-- QUIZ -->
-  <form id="quiz" class="hidden" autocomplete="off">
-    <div class="card" data-step="0">
-      <h3>Qual seu principal objetivo agora?</h3>
-      <button type="button" class="answer" data-a="Renda extra imediata">Renda extra imediata</button>
-      <button type="button" class="answer" data-a="Estruturar vendas no sigilo">Estruturar vendas no sigilo</button>
-      <button type="button" class="answer" data-a="Validar um produto">Validar um produto</button>
-      <button type="button" class="answer" data-a="Escalar o que já vende">Escalar o que já vende</button>
-      <div class="nav"><button type="button" class="prev" disabled>Voltar</button><button type="button" class="skip">Pular</button></div>
-    </div>
+      <!-- QUIZ -->
+      <section id="quiz" class="card" style="display:none">
+        <!-- Status / micro loading -->
+        <div id="status" class="status" aria-live="polite">
+          <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+          <span id="statusText">Analisando seu perfil…</span>
+        </div>
 
-    <div class="card hidden" data-step="1">
-      <h3>Seu nível hoje?</h3>
-      <button type="button" class="answer" data-a="Iniciante">Iniciante</button>
-      <button type="button" class="answer" data-a="Intermediário">Intermediário</button>
-      <button type="button" class="answer" data-a="Avançado">Avançado</button>
-      <div class="nav"><button type="button" class="prev">Voltar</button><button type="button" class="skip">Pular</button></div>
-    </div>
+        <!-- PASSO 1 -->
+        <div id="q1" style="display:none">
+          <h2 style="margin:8px 0 6px">Você quer ativar um mecanismo sigiloso que trabalha por você todos os dias?</h2>
+          <button class="quiz-option" data-points="10" data-q="q1" data-a="sim">✅ Sim, quero conhecer agora</button>
+          <button class="quiz-option" data-points="6" data-q="q1" data-a="duvidas">🤔 Tenho dúvidas, mas quero ver</button>
+        </div>
 
-    <div class="card hidden" data-step="2">
-      <h3>Quanto tempo por dia você tem?</h3>
-      <button type="button" class="answer" data-a="< 1h">&lt; 1h</button>
-      <button type="button" class="answer" data-a="1–2h">1–2h</button>
-      <button type="button" class="answer" data-a="3h+">3h+</button>
-      <div class="nav"><button type="button" class="prev">Voltar</button><button type="button" class="skip">Pular</button></div>
-    </div>
+        <!-- PASSO 2 -->
+        <div id="q2" style="display:none">
+          <h2 style="margin:8px 0 6px">Qual situação descreve melhor você hoje?</h2>
+          <button class="quiz-option" data-points="8" data-q="q2" data-a="iniciante">👩‍💻 Nunca ganhei online e quero começar</button>
+          <button class="quiz-option" data-points="7" data-q="q2" data-a="frustrada">🔁 Já tentei e não consegui</button>
+          <button class="quiz-option" data-points="9" data-q="q2" data-a="avancada">🚀 Já vendo e quero automatizar no sigilo</button>
+        </div>
 
-    <div class="card hidden" data-step="3">
-      <h3>Quer aparecer nos conteúdos?</h3>
-      <button type="button" class="answer" data-a="Não, zero exposição">Não, zero exposição</button>
-      <button type="button" class="answer" data-a="Talvez, pouco">Talvez, pouco</button>
-      <button type="button" class="answer" data-a="Sim, sem problemas">Sim, sem problemas</button>
-      <div class="nav"><button type="button" class="prev">Voltar</button><button type="button" class="skip">Pular</button></div>
-    </div>
+        <!-- PASSO 3 -->
+        <div id="q3" style="display:none">
+          <h2 style="margin:8px 0 6px">Perfeito. Onde deseja receber o acesso?</h2>
+          <div class="sep"></div>
+          <button class="btn btn-primary" id="whatsBtn">📲 Receber no WhatsApp (recomendado)</button>
+          <button class="btn" id="emailBtn">✉️ Receber por e-mail</button>
+          <p class="muted" style="margin-top:8px">Dica: pelo WhatsApp você recebe mais rápido.</p>
+        </div>
+      </section>
 
-    <div class="card hidden" data-step="4">
-      <h3>Qual orçamento para iniciar?</h3>
-      <button type="button" class="answer" data-a="R$0 a R$10/dia">R$0 a R$10/dia</button>
-      <button type="button" class="answer" data-a="R$10 a R$30/dia">R$10 a R$30/dia</button>
-      <button type="button" class="answer" data-a="R$30+/dia">R$30+/dia</button>
-      <div class="nav"><button type="button" class="prev">Voltar</button><button type="button" class="skip">Pular</button></div>
-    </div>
-
-    <!-- lead/cta final -->
-    <div class="card hidden" data-step="5" id="lead">
-      <h3>Quase lá! Para liberar seu acesso 👇</h3>
-      <div style="display:grid; gap:10px; grid-template-columns:1fr; max-width:520px; margin:10px auto 0">
-        <input id="nome" placeholder="Seu nome (opcional)" style="background:#071a12;color:#eafff4;border:1px solid #0a3; padding:12px 14px;border-radius:12px">
-        <input id="whats" placeholder="Seu WhatsApp (opcional)" style="background:#071a12;color:#eafff4;border:1px solid #0a3; padding:12px 14px;border-radius:12px">
-      </div>
-      <button type="button" id="finishBtn" class="btn" style="margin-top:12px">Liberar acesso</button>
-      <div class="nav" style="justify-content:center"><button type="button" class="prev">Voltar</button></div>
-    </div>
-  </form>
-
-  <footer>© <span id="year"></span> IA Black</footer>
+      <!-- Rodapé curto -->
+      <footer class="muted" style="text-align:center;font-size:12px;margin-top:2px">
+        <div>© <span id="yy"></span> Mecanismo de Vendas Automáticas — Acesso Sigiloso</div>
+      </footer>
+    </main>
+  </div>
 
   <script>
-    /* ===== efeito matrix ===== */
-    (function(){
-      const c=document.getElementById('matrix'),x=c.getContext('2d');
-      function size(){ c.width=innerWidth; c.height=innerHeight; cols=Math.ceil(c.width/font); drops=Array(cols).fill(1); }
-      let font=14, cols=0, drops=[];
-      size(); addEventListener('resize', size);
-      const letters="ｱｶｻﾀﾅﾊﾏﾔﾗﾜ0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ".split('');
+    // ========== UTIL: Ano no rodapé ==========
+    document.getElementById('yy').textContent = new Date().getFullYear();
+
+    // ========== STATE ==========
+    let score = 0;
+    const answers = { q1:null, q2:null };
+    const scorePill = document.getElementById('score-pill');
+
+    function addPoints(n){
+      score += Number(n||0);
+      scorePill.textContent = `Pontos: ${score}`;
+    }
+
+    // ========== AUDIO (sem arquivos): WebAudio gera os sons ==========
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    const audioCtx = new AudioCtx();
+
+    function beep(freq=880, duration=120, type='sine', volume=0.05){
+      const o = audioCtx.createOscillator();
+      const g = audioCtx.createGain();
+      o.type = type;
+      o.frequency.value = freq;
+      g.gain.value = volume;
+      o.connect(g); g.connect(audioCtx.destination);
+      o.start();
+      setTimeout(()=>{ o.stop(); }, duration);
+    }
+    function clickSound(){ beep(1200, 80, 'square', 0.06); if(navigator.vibrate) navigator.vibrate(15); }
+    function successSound(){ beep(620, 120, 'triangle', 0.07); setTimeout(()=>beep(880, 140, 'triangle', 0.07), 120); if(navigator.vibrate) navigator.vibrate([20,40,20]); }
+
+    // ========== UI Helpers ==========
+    const $ = sel => document.querySelector(sel);
+    const show = el => (el.style.display = '');
+    const hide = el => (el.style.display = 'none');
+
+    function microDelay(text='Analisando seu perfil…', cb=()=>{}){
+      const status = $('#status');
+      const statusText = $('#statusText');
+      statusText.textContent = text;
+      show(status);
+      setTimeout(() => { hide(status); cb(); }, 180); // 180ms: sensação de "mecanismo"
+    }
+
+    // ========== FLUXO ==========
+    $('#startBtn').addEventListener('click', () => {
+      clickSound();
+      hide($('#startBtn').closest('header')); // esconde hero
+      show($('#quiz'));
+      microDelay('Inicializando mecanismo…', () => show($('#q1')));
+    });
+
+    // Delegate cliques nas opções
+    $('#quiz').addEventListener('click', (ev) => {
+      const btn = ev.target.closest('.quiz-option');
+      if(!btn) return;
+
+      // tocar som e pontuar
+      clickSound();
+      const pts = btn.getAttribute('data-points') || 0;
+      addPoints(pts);
+
+      // salvar resposta
+      const q = btn.getAttribute('data-q');
+      const a = btn.getAttribute('data-a');
+      if(q) answers[q] = a;
+
+      // avançar
+      if(q === 'q1'){
+        hide($('#q1'));
+        microDelay('Analisando seu perfil…', () => show($('#q2')));
+      } else if(q === 'q2'){
+        hide($('#q2'));
+        microDelay('Validando acesso sigiloso…', () => show($('#q3')));
+      }
+    });
+
+    // Q3: WhatsApp
+    $('#whatsBtn').addEventListener('click', () => {
+      successSound();
+
+      // TODO: ajuste aqui seu número de WhatsApp (com DDI e DDD, só números)
+      const phone = '5521972362435'; // +55 21 97236-2435
+
+      const perfil =
+        answers.q2 === 'iniciante' ? 'Iniciante' :
+        answers.q2 === 'frustrada' ? 'Já tentei e não consegui' :
+        answers.q2 === 'avancada' ? 'Avançada' : 'Não informado';
+
+      const msg = `Oi, Carina! Acabei o quiz do Mecanismo. Quero liberar meu acesso. Pontos: ${score}. Perfil: ${perfil}. Bora ativar?`;
+      const url = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
+
+      // pequena pausa para o som "fechar"
+      setTimeout(()=> window.location.href = url, 250);
+    });
+
+    // Q3: Email (opcional — aqui apenas sugere WhatsApp e mantém fluxo)
+    $('#emailBtn').addEventListener('click', () => {
+      clickSound();
+      alert('Para agilizar seu acesso, recomendo receber pelo WhatsApp. Você pode tocar no botão rosa "Receber no WhatsApp".');
+    });
+
+    // ========== MATRIX RAIN (código caindo) ==========
+    (function matrixRain(){
+      const canvas = document.getElementById('matrix');
+      const ctx = canvas.getContext('2d');
+      function resize(){
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }
+      resize(); window.addEventListener('resize', resize);
+
+      const letters = '01ABCDEFGHIJKLMNOPQRSTUVWXYZ$#@*%&';
+      const fontSize = 16; // ajuste se quiser letras maiores
+      const columns = Math.floor(canvas.width / fontSize);
+      const drops = Array(columns).fill(1);
+
       function draw(){
-        x.fillStyle="rgba(0,0,0,0.08)"; x.fillRect(0,0,c.width,c.height);
-        x.fillStyle="#0f0"; x.font=font+"px monospace";
-        for(let i=0;i<drops.length;i++){
-          const t=letters[Math.random()*letters.length|0];
-          x.fillText(t,i*font,drops[i]*font);
-          if(drops[i]*font>c.height && Math.random()>0.975) drops[i]=0;
+        // fundo com leve "rastro"
+        ctx.fillStyle = 'rgba(0,0,0,0.08)';
+        ctx.fillRect(0,0,canvas.width,canvas.height);
+
+        ctx.fillStyle = '#ff6ecf'; // tom rosa claro
+        ctx.shadowColor = '#ff2ea6';
+        ctx.shadowBlur = 8;
+        ctx.font = `${fontSize}px monospace`;
+
+        for(let i=0; i<drops.length; i++){
+          const text = letters.charAt(Math.floor(Math.random()*letters.length));
+          const x = i*fontSize;
+          const y = drops[i]*fontSize;
+
+          ctx.fillText(text, x, y);
+
+          if(y > canvas.height && Math.random() > 0.975){
+            drops[i] = 0;
+          }
           drops[i]++;
         }
+        requestAnimationFrame(draw);
       }
-      setInterval(draw,40);
+      draw();
     })();
-
-    /* ===== estado/úteis ===== */
-    const DESTINO_CHECKOUT='https://go.pepperpay.com.br/hb90b'; // seu checkout
-    const keepParams=['utm_source','utm_medium','utm_campaign','utm_content','utm_term','utm_id','fbclid'];
-    const params=new URLSearchParams(location.search);
-    const answers={}; let step=0, xp=0, lvl=1;
-
-    const $=s=>document.querySelector(s);
-    const $$=s=>document.querySelectorAll(s);
-    const toSlug=t=>t.normalize('NFD').replace(/[^\w\s-]/g,'').trim().replace(/\s+/g,'-').toLowerCase();
-    function addXP(n){ xp+=n; if(xp>=lvl*100){ lvl++; } $('#xp').textContent=`${xp} XP`; $('#lvl').textContent=`LVL ${lvl}`; }
-
-    /* ===== sfx (som de clique) ===== */
-    let AC; function unlockAudio(){ if(!AC){ const C=window.AudioContext||window.webkitAudioContext; if(C) AC=new C(); } }
-    function sfx(){ if(!AC) return; const t=AC.currentTime; const o=AC.createOscillator(), g=AC.createGain();
-      o.type='square'; o.frequency.setValueAtTime(700,t);
-      g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(0.08,t+0.01);
-      g.gain.exponentialRampToValueAtTime(0.0001,t+0.09); o.connect(g).connect(AC.destination);
-      o.start(t); o.stop(t+0.10);
-    }
-    document.addEventListener('click', e=>{ if(e.target.closest('.sfx')) sfx(); }, true);
-
-    /* ===== fluxo ===== */
-    $('#startBtn').addEventListener('click', ()=>{
-      unlockAudio(); sfx();
-      $('#intro').classList.add('hidden');
-      $('#quiz').classList.remove('hidden');
-      addXP(100); // bônus de início
-      try{ fbq('trackCustom','StartQuiz'); }catch(e){}
-      showStep(0);
-    });
-
-    function showStep(i){
-      step=i;
-      const cards=$$('#quiz .card');
-      cards.forEach((el,idx)=> el.classList.toggle('hidden', idx!==i));
-      if(i===cards.length-1){ $('#nome').focus(); }
-    }
-
-    document.addEventListener('click', (e)=>{
-      // resposta
-      const btn=e.target.closest('.answer');
-      if(btn){
-        const card=btn.closest('.card'); const i=+card.dataset.step;
-        const ids=['objetivo','experiencia','tempo','exposicao','orcamento'];
-        if(ids[i]) answers[ids[i]]=btn.dataset.a||btn.textContent.trim();
-        addXP(50);
-        try{ fbq('trackCustom','AnswerQuestion',{step:i,answer:btn.dataset.a}); }catch(_){}
-        showStep(Math.min(step+1, 5));
-      }
-      // navegação
-      if(e.target.matches('.prev')) showStep(Math.max(step-1,0));
-      if(e.target.matches('.skip')) showStep(Math.min(step+1,5));
-      // finalizar
-      if(e.target.matches('#finishBtn')) finalizar();
-    });
-
-    function finalizar(){
-      const nome=$('#nome').value.trim(); const whats=$('#whats').value.trim();
-      const url=new URL(DESTINO_CHECKOUT);
-      keepParams.forEach(k=>{ if(params.get(k)) url.searchParams.set(k, params.get(k)); });
-      Object.entries({nome,whats,...answers}).forEach(([k,v])=>{
-        if(v) url.searchParams.set('q_'+toSlug(k), toSlug(String(v)));
-      });
-      try{ fbq('track','Lead'); fbq('trackCustom','SubmitQuiz', {nome,whats,...answers}); }catch(_){}
-      location.href=url.toString();
-    }
-
-    document.getElementById('year').textContent=new Date().getFullYear();
   </script>
 </body>
 </html>
