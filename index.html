@@ -153,4 +153,144 @@
       <button type="button" class="answer" data-a="Estruturar vendas no sigilo">Estruturar vendas no sigilo</button>
       <button type="button" class="answer" data-a="Validar um produto">Validar um produto</button>
       <button type="button" class="answer" data-a="Escalar o que já vende">Escalar o que já vende</button>
-      <div class="nav"><button type="button" class="prev" disabled>Voltar</b
+      <div class="nav"><button type="button" class="prev" disabled>Voltar</button><button type="button" class="skip">Pular</button></div>
+    </div>
+
+    <div class="card hidden" data-step="1">
+      <h3>Seu nível hoje?</h3>
+      <button type="button" class="answer" data-a="Iniciante">Iniciante</button>
+      <button type="button" class="answer" data-a="Intermediário">Intermediário</button>
+      <button type="button" class="answer" data-a="Avançado">Avançado</button>
+      <div class="nav"><button type="button" class="prev">Voltar</button><button type="button" class="skip">Pular</button></div>
+    </div>
+
+    <div class="card hidden" data-step="2">
+      <h3>Quanto tempo por dia você tem?</h3>
+      <button type="button" class="answer" data-a="< 1h">&lt; 1h</button>
+      <button type="button" class="answer" data-a="1–2h">1–2h</button>
+      <button type="button" class="answer" data-a="3h+">3h+</button>
+      <div class="nav"><button type="button" class="prev">Voltar</button><button type="button" class="skip">Pular</button></div>
+    </div>
+
+    <div class="card hidden" data-step="3">
+      <h3>Quer aparecer nos conteúdos?</h3>
+      <button type="button" class="answer" data-a="Não, zero exposição">Não, zero exposição</button>
+      <button type="button" class="answer" data-a="Talvez, pouco">Talvez, pouco</button>
+      <button type="button" class="answer" data-a="Sim, sem problemas">Sim, sem problemas</button>
+      <div class="nav"><button type="button" class="prev">Voltar</button><button type="button" class="skip">Pular</button></div>
+    </div>
+
+    <div class="card hidden" data-step="4">
+      <h3>Qual orçamento para iniciar?</h3>
+      <button type="button" class="answer" data-a="R$0 a R$10/dia">R$0 a R$10/dia</button>
+      <button type="button" class="answer" data-a="R$10 a R$30/dia">R$10 a R$30/dia</button>
+      <button type="button" class="answer" data-a="R$30+/dia">R$30+/dia</button>
+      <div class="nav"><button type="button" class="prev">Voltar</button><button type="button" class="skip">Pular</button></div>
+    </div>
+
+    <!-- lead/cta final -->
+    <div class="card hidden" data-step="5" id="lead">
+      <h3>Quase lá! Para liberar seu acesso 👇</h3>
+      <div style="display:grid; gap:10px; grid-template-columns:1fr; max-width:520px; margin:10px auto 0">
+        <input id="nome" placeholder="Seu nome (opcional)" style="background:#071a12;color:#eafff4;border:1px solid #0a3; padding:12px 14px;border-radius:12px">
+        <input id="whats" placeholder="Seu WhatsApp (opcional)" style="background:#071a12;color:#eafff4;border:1px solid #0a3; padding:12px 14px;border-radius:12px">
+      </div>
+      <button type="button" id="finishBtn" class="btn" style="margin-top:12px">Liberar acesso</button>
+      <div class="nav" style="justify-content:center"><button type="button" class="prev">Voltar</button></div>
+    </div>
+  </form>
+
+  <footer>© <span id="year"></span> IA Black</footer>
+
+  <script>
+    /* ===== efeito matrix ===== */
+    (function(){
+      const c=document.getElementById('matrix'),x=c.getContext('2d');
+      function size(){ c.width=innerWidth; c.height=innerHeight; cols=Math.ceil(c.width/font); drops=Array(cols).fill(1); }
+      let font=14, cols=0, drops=[];
+      size(); addEventListener('resize', size);
+      const letters="ｱｶｻﾀﾅﾊﾏﾔﾗﾜ0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ".split('');
+      function draw(){
+        x.fillStyle="rgba(0,0,0,0.08)"; x.fillRect(0,0,c.width,c.height);
+        x.fillStyle="#0f0"; x.font=font+"px monospace";
+        for(let i=0;i<drops.length;i++){
+          const t=letters[Math.random()*letters.length|0];
+          x.fillText(t,i*font,drops[i]*font);
+          if(drops[i]*font>c.height && Math.random()>0.975) drops[i]=0;
+          drops[i]++;
+        }
+      }
+      setInterval(draw,40);
+    })();
+
+    /* ===== estado/úteis ===== */
+    const DESTINO_CHECKOUT='https://go.pepperpay.com.br/hb90b'; // seu checkout
+    const keepParams=['utm_source','utm_medium','utm_campaign','utm_content','utm_term','utm_id','fbclid'];
+    const params=new URLSearchParams(location.search);
+    const answers={}; let step=0, xp=0, lvl=1;
+
+    const $=s=>document.querySelector(s);
+    const $$=s=>document.querySelectorAll(s);
+    const toSlug=t=>t.normalize('NFD').replace(/[^\w\s-]/g,'').trim().replace(/\s+/g,'-').toLowerCase();
+    function addXP(n){ xp+=n; if(xp>=lvl*100){ lvl++; } $('#xp').textContent=`${xp} XP`; $('#lvl').textContent=`LVL ${lvl}`; }
+
+    /* ===== sfx (som de clique) ===== */
+    let AC; function unlockAudio(){ if(!AC){ const C=window.AudioContext||window.webkitAudioContext; if(C) AC=new C(); } }
+    function sfx(){ if(!AC) return; const t=AC.currentTime; const o=AC.createOscillator(), g=AC.createGain();
+      o.type='square'; o.frequency.setValueAtTime(700,t);
+      g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(0.08,t+0.01);
+      g.gain.exponentialRampToValueAtTime(0.0001,t+0.09); o.connect(g).connect(AC.destination);
+      o.start(t); o.stop(t+0.10);
+    }
+    document.addEventListener('click', e=>{ if(e.target.closest('.sfx')) sfx(); }, true);
+
+    /* ===== fluxo ===== */
+    $('#startBtn').addEventListener('click', ()=>{
+      unlockAudio(); sfx();
+      $('#intro').classList.add('hidden');
+      $('#quiz').classList.remove('hidden');
+      addXP(100); // bônus de início
+      try{ fbq('trackCustom','StartQuiz'); }catch(e){}
+      showStep(0);
+    });
+
+    function showStep(i){
+      step=i;
+      const cards=$$('#quiz .card');
+      cards.forEach((el,idx)=> el.classList.toggle('hidden', idx!==i));
+      if(i===cards.length-1){ $('#nome').focus(); }
+    }
+
+    document.addEventListener('click', (e)=>{
+      // resposta
+      const btn=e.target.closest('.answer');
+      if(btn){
+        const card=btn.closest('.card'); const i=+card.dataset.step;
+        const ids=['objetivo','experiencia','tempo','exposicao','orcamento'];
+        if(ids[i]) answers[ids[i]]=btn.dataset.a||btn.textContent.trim();
+        addXP(50);
+        try{ fbq('trackCustom','AnswerQuestion',{step:i,answer:btn.dataset.a}); }catch(_){}
+        showStep(Math.min(step+1, 5));
+      }
+      // navegação
+      if(e.target.matches('.prev')) showStep(Math.max(step-1,0));
+      if(e.target.matches('.skip')) showStep(Math.min(step+1,5));
+      // finalizar
+      if(e.target.matches('#finishBtn')) finalizar();
+    });
+
+    function finalizar(){
+      const nome=$('#nome').value.trim(); const whats=$('#whats').value.trim();
+      const url=new URL(DESTINO_CHECKOUT);
+      keepParams.forEach(k=>{ if(params.get(k)) url.searchParams.set(k, params.get(k)); });
+      Object.entries({nome,whats,...answers}).forEach(([k,v])=>{
+        if(v) url.searchParams.set('q_'+toSlug(k), toSlug(String(v)));
+      });
+      try{ fbq('track','Lead'); fbq('trackCustom','SubmitQuiz', {nome,whats,...answers}); }catch(_){}
+      location.href=url.toString();
+    }
+
+    document.getElementById('year').textContent=new Date().getFullYear();
+  </script>
+</body>
+</html>
