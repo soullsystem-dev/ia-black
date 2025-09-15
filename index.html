@@ -1,255 +1,143 @@
 <!doctype html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-  <title>Sistema Oculto – Acesso Sigiloso</title>
-  <meta name="description" content="Um sistema oculto que fatura todos os dias no automático — sem aparecer." />
-  <meta name="theme-color" content="#9b30ff" /> 
-
-  <!-- Fonte -->
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet" />
-
-  <!-- Meta Pixel Code -->
-  <script>
-    !function(f,b,e,v,n,t,s)
-    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-    n.queue=[];t=b.createElement(e);t.async=!0;
-    t.src=v;s=b.getElementsByTagName(e)[0];
-    s.parentNode.insertBefore(t,s)}(window, document,'script',
-    'https://connect.facebook.net/en_US/fbevents.js');
-    fbq('init', '664309226562112');
-    fbq('track', 'PageView');
-  </script>
-  <!-- End Meta Pixel Code -->
+  <title>IA Black • Protocolo + Quiz</title>
+  <meta name="description" content="Protocolo Black com intro + quiz gamificado (XP/LVL), efeito matrix verde, preserva UTMs e envia respostas ao checkout." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;900&display=swap" rel="stylesheet">
 
   <style>
     :root{
-      --accent:#9b30ff; /* Roxo neon */
-      --accent-soft:rgba(155,48,255,.25);
-      --bg:#07050A;
-      --text:#f4f4f5;
-      --muted:#b9b3c5;
-      --on-accent:#ffffff;
+      --neon:#00ff40;      /* VERDE NEON forte */
+      --neon2:#00ff40;     /* mesma cor (sem degradê) */
+      --border:#00cc33;
+      --bg:#000;
+      --card:#000000e6;
+      --muted:#b8ffcc;
+      --btnText:#001a08;   /* preto escurão nas letras */
     }
-    *{box-sizing:border-box;margin:0;padding:0}
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
     body{
-      font-family:'Montserrat',sans-serif;
-      background:var(--bg);
-      color:var(--text);
-      text-align:center;
+      margin:0;
+      font-family:"Orbitron",system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial,sans-serif;
+      background:#000;
+      color:#eafff4;
       overflow-x:hidden;
     }
-    .wrap{
-      position:relative;
-      min-height:100vh;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding:24px;
-    }
-    .content{width:100%;max-width:700px;z-index:1;position:relative}
 
-    /* Fundo: códigos hacker neon */
-    #matrixCanvas{
-      position:fixed;
-      inset:0;
-      z-index:0;
-      pointer-events:none;
-      background:#000;
+    /* HUD */
+    .hud{
+      position:sticky; top:0; z-index:30;
+      backdrop-filter: blur(6px);
+      background:rgba(0,0,0,.55);
+      border-bottom:1px solid #004d1a;
+      padding:10px 14px;
+      display:flex; align-items:center; justify-content:space-between;
     }
+    .badge{
+      display:inline-flex; align-items:center; gap:10px;
+      font-size:12px; letter-spacing:.12em; font-weight:900;
+      color:#a6ffb8;
+      padding:10px 14px; border-radius:14px;
+      background:#001a0a;
+      box-shadow: inset 0 0 20px rgba(0,255,64,.25), 0 0 12px rgba(0,255,64,.35);
+      border:1px solid #00b33c;
+      text-shadow:0 0 8px rgba(0,255,64,.5);
+    }
+    .progress{ height:6px; flex:1; margin-left:16px; border-radius:999px; background:#001a0a; overflow:hidden; border:1px solid #004d1a; }
+    .progress > div{ height:100%; width:0%; background:var(--neon); box-shadow:0 0 18px rgba(0,255,64,.6); transition:width .25s ease; }
 
-    .proof-img{
-      margin-bottom:12px;
-      border-radius:18px;
-      overflow:hidden;
-      box-shadow:0 0 22px var(--accent-soft),0 0 60px rgba(155,48,255,.20);
-    }
-    .proof-img img{width:100%;height:auto;display:block}
-    .proof-caption{font-size:13px;color:var(--muted);margin-bottom:18px}
+    /* Fundo Matrix VERDE */
+    #matrix{ position:fixed; inset:0; z-index:-2; display:block; background:#000; }
+    .vignette{ pointer-events:none; position:fixed; inset:0; z-index:-1; background:
+      radial-gradient(1200px 500px at 50% 20%, rgba(0,0,0,.3), transparent 60%),
+      radial-gradient(1000px 600px at 50% 80%, rgba(0,0,0,.45), transparent 60%),
+      linear-gradient(0deg, rgba(0,0,0,.6), rgba(0,0,0,.6)); }
 
-    .title{font-size:clamp(26px,5vw,40px);font-weight:800;margin-bottom:12px}
-    .subtitle{font-size:18px;font-weight:600;color:var(--muted);margin-bottom:20px}
+    .wrap{max-width:980px; margin:0 auto; padding:22px 16px 80px}
+    .glass{ background:var(--card); border:1px solid #003d14; border-radius:26px; box-shadow:0 25px 80px rgba(0,0,0,.65), inset 0 0 25px rgba(0,255,64,.1); padding:22px; }
 
-    .btn{
-      display:inline-block;
-      padding:18px 28px;
-      font-size:18px;
-      font-weight:800;
-      border-radius:999px;
-      background:var(--accent);
-      color:var(--on-accent);
-      text-decoration:none;
-      box-shadow:0 0 22px var(--accent-soft),0 0 42px var(--accent-soft);
-      transition:transform .15s ease,box-shadow .15s ease;
-      animation:pulse 2s infinite;
-    }
-    .btn:hover{
-      transform:translateY(-2px);
-      box-shadow:0 0 40px rgba(155,48,255,.7),0 0 80px rgba(155,48,255,.5);
-    }
-    @keyframes pulse{
-      0%{box-shadow:0 0 22px var(--accent-soft),0 0 42px var(--accent-soft);}
-      50%{box-shadow:0 0 40px rgba(155,48,255,.9),0 0 80px rgba(155,48,255,.6);}
-      100%{box-shadow:0 0 22px var(--accent-soft),0 0 42px var(--accent-soft);}
-    }
+    .hero{text-align:center; margin:42px auto 28px;}
+    .hero h1{ margin:0 0 10px; font-size:clamp(28px,7vw,64px); font-weight:900; letter-spacing:.06em; color:var(--neon); text-shadow:0 0 10px rgba(0,255,64,.9),0 0 28px rgba(0,255,64,.6),0 0 60px rgba(0,255,64,.35); }
+    .hero p{ color:#ccffd6; opacity:.9; font-weight:600; text-shadow:0 0 12px rgba(0,255,64,.35); }
 
-    .slots{
-      margin-top:16px;
-      font-size:16px;
-      font-weight:700;
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      padding:8px 16px;
-      border-radius:999px;
-      background:rgba(255,255,255,.06);
-      box-shadow:0 0 16px var(--accent-soft);
+    .btn{ cursor:pointer; border:none; padding:16px 26px; border-radius:18px;
+      background:var(--neon); color:var(--btnText);
+      font-weight:900; letter-spacing:.12em;
+      box-shadow:0 0 40px rgba(0,255,64,.55),0 15px 28px rgba(0,0,0,.6),inset 0 0 16px rgba(0,0,0,.85);
     }
-    .slots .value{
-      background:var(--accent);
-      color:var(--on-accent);
-      padding:6px 14px;
-      border-radius:999px;
-      font-weight:900;
-      min-width:48px;
-    }
+    .btn:hover{ transform:translateY(-1px); filter:brightness(1.05) }
 
-    footer{margin-top:30px;font-size:12px;color:var(--muted)}
+    .answers{ display:grid; gap:14px; margin-top:16px }
+    .answer{ padding:16px 18px; border-radius:16px; border:1px solid #00b33c;
+      background:var(--neon); color:var(--btnText); font-weight:900;
+      text-shadow:0 1px 0 rgba(255,255,255,.35); box-shadow:0 6px 28px rgba(0,255,64,.45), inset 0 0 14px rgba(0,0,0,.85); }
+    .answer:hover{ filter:brightness(1.06); transform:translateY(-1px) }
+
+    .nav{ display:flex; justify-content:space-between; margin-top:14px }
+    .nav button{ background:none; border:none; color:#b8ffcc; text-decoration:underline; cursor:pointer; font-weight:700; }
+    .nav button[disabled]{ opacity:.3; pointer-events:none }
+
+    footer{text-align:center; padding:40px 12px; color:#99ffc2; opacity:.9}
+    .hidden{display:none!important}
   </style>
 </head>
 <body>
-  <!-- Meta Pixel (noscript) -->
-  <noscript>
-    <img height="1" width="1" style="display:none"
-         src="https://www.facebook.com/tr?id=664309226562112&ev=PageView&noscript=1" />
-  </noscript>
-
-  <!-- Fundo: códigos hacker -->
-  <canvas id="matrixCanvas"></canvas>
-
-  <div class="wrap">
-    <div class="content">
-      <!-- Print -->
-      <div class="proof-img">
-        <img src="print-painel.jpg" alt="Comprovante real do painel" />
-      </div>
-      <div class="proof-caption">
-        Resultado real do meu painel — Saldo total R$ 28.736,75 • Disponível R$ 19.210,87 • Vendas hoje R$ 1.584,37 • Ontem R$ 1.897,28.<br />
-        <em>Resultados variam conforme aplicação.</em>
-      </div>
-
-      <!-- Texto -->
-      <h1 class="title">⚡ Um sistema oculto que fatura todos os dias no automático — sem aparecer.</h1>
-      <p class="subtitle">Receba agora o acesso exclusivo direto no WhatsApp.</p>
-
-      <!-- CTA -->
-      <a
-        href="https://wa.me/5547999860511?text=Oi%20Carina!%20T%C3%B4%20curiosa%20pra%20saber%20como%20esse%20m%C3%A9todo%20funciona%20na%20pr%C3%A1tica."
-        target="_blank" rel="noopener"
-        class="btn"
-        onclick="fbq && fbq('track','Lead');"
-      >
-        QUERO ATIVAR MEU SISTEMA AGORA
-      </a>
-
-      <!-- Contador -->
-      <div class="slots">
-        Acessos disponíveis <span class="value" id="slots-value">20</span>
-      </div>
-
-      <footer>© 2025 Sistema Oculto — Acesso Sigiloso</footer>
-    </div>
+  <canvas id="matrix"></canvas>
+  <div class="vignette"></div>
+  <div class="hud">
+    <div class="badge"><span id="xp">0 XP</span> | <span id="lvl">LVL 1</span></div>
+    <div class="progress"><div id="bar"></div></div>
   </div>
 
+  <div class="wrap">
+    <section id="intro" class="glass">
+      <div class="hero">
+        <h1>INICIANDO PROTOCOLO BLACK…</h1>
+        <p>Sistema carregado. Pressione para continuar.</p>
+        <button id="start" class="btn">INICIAR PROTOCOLO</button>
+      </div>
+    </section>
+
+    <form id="quiz" class="glass hidden"></form>
+
+    <section id="lead" class="glass hidden">
+      <h3 style="margin:0 0 10px;color:var(--muted)">Quase lá — destrave seu acesso</h3>
+      <div style="margin-top:10px;display:grid;gap:12px">
+        <input id="nome" class="lead-input" placeholder="Seu nome (opcional)" />
+        <input id="whats" class="lead-input" placeholder="Seu WhatsApp (opcional)" />
+      </div>
+      <div style="margin-top:16px">
+        <button id="finish" type="button" class="btn">LIBERAR ACESSO</button>
+      </div>
+    </section>
+  </div>
+
+  <footer>© <span id="year"></span> IA Black</footer>
+
   <script>
-    /* ===== CONTADOR DE VAGAS (rápido) ===== */
-    const slotsEl = document.getElementById("slots-value");
-    const CTA = document.querySelector(".btn");
+    const QUESTIONS=[
+      {id:'objetivo',q:'Qual seu principal objetivo agora?',a:['Renda extra','Estruturar no sigilo','Validar produto','Escalar vendas']},
+      {id:'nivel',q:'Seu nível hoje?',a:['Iniciante','Intermediário','Avançado']}
+    ];
+    const $=s=>document.querySelector(s); const $$=s=>document.querySelectorAll(s);
+    let step=0;
+    function showStep(i){ step=i; $$('#quiz>section').forEach((el,idx)=>el.classList.toggle('hidden',idx!==i)); if(i>=QUESTIONS.length){$('#quiz').classList.add('hidden');$('#lead').classList.remove('hidden');}}
+    function renderQuiz(){ const f=$('#quiz'); f.innerHTML=''; QUESTIONS.forEach((q,i)=>{ const s=document.createElement('section'); s.dataset.step=i; s.innerHTML=`<h3>${q.q}</h3><div class="answers">${q.a.map(opt=>`<button type="button" class="answer" data-a="${opt}">${opt}</button>`).join('')}</div><div class="nav"><button type="button" class="prev" ${i===0?'disabled':''}>Voltar</button><button type="button" class="skip">Pular</button></div>`; f.appendChild(s); }); f.classList.remove('hidden'); showStep(0); }
+    $('#start').addEventListener('click',()=>{ $('#intro').classList.add('hidden'); renderQuiz(); });
+    document.addEventListener('click',e=>{ if(e.target.matches('.answer')){ showStep(step+1);} if(e.target.matches('.prev'))showStep(step-1); if(e.target.matches('.skip'))showStep(step+1); if(e.target.matches('#finish'))alert('Enviar ao checkout'); });
+    document.getElementById('year').textContent=new Date().getFullYear();
 
-    let slots = parseInt(localStorage.getItem("slotsValue") || "20", 10);
-
-    function renderSlots() {
-      if (slots < 0) slots = 0;
-      slotsEl.textContent = slots;
-
-      const whatsMsg = encodeURIComponent("Oi Carina! Tô curiosa pra saber como esse método funciona na prática.");
-      const whatsBase = "https://wa.me/5547999860511?text=" + whatsMsg;
-
-      if (slots <= 0) {
-        CTA.textContent = "ENTRAR NA LISTA";
-        CTA.setAttribute("href", whatsBase);
-      } else if (slots <= 3) {
-        CTA.textContent = "ÚLTIMAS " + slots + " VAGAS — ATIVAR AGORA";
-        CTA.setAttribute("href", whatsBase);
-      } else {
-        CTA.textContent = "QUERO ATIVAR MEU SISTEMA AGORA";
-        CTA.setAttribute("href", whatsBase);
-      }
-    }
-    function saveSlots(){ localStorage.setItem("slotsValue", String(slots)); }
-
-    function tickSlots(){
-      if (slots <= 0) return;
-      const drop = Math.random() < 0.25 ? 2 : 1;
-      slots = Math.max(0, slots - drop);
-      saveSlots();
-      renderSlots();
-
-      let nextMin, nextMax;
-      if (slots > 10) { nextMin = 6000; nextMax = 10000; }   // 6–10s
-      else if (slots > 3){ nextMin = 4000; nextMax = 7000; } // 4–7s
-      else if (slots > 0){ nextMin = 3000; nextMax = 5000; } // 3–5s
-      else { return; }
-
-      const wait = nextMin + Math.random()*(nextMax - nextMin);
-      setTimeout(tickSlots, wait);
-    }
-
-    renderSlots();
-    setTimeout(tickSlots, 3000 + Math.random()*3000); // primeira queda 3–6s
-
-    /* ===== MATRIX HACKER NEON (fundo) ===== */
-    const canvas = document.getElementById("matrixCanvas");
-    const ctx = canvas.getContext("2d");
-    let W, H;
-    function resize(){ W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
-    window.addEventListener("resize", () => { resize(); drops = Array(columns()).fill(1); });
-    resize();
-
-    const letters = "01ABCDEFGHIJKLMNOPQRSTUVWXYZ$#@&%";
-    let fontSize = 16;
-    function columns(){ return Math.floor(W / fontSize); }
-    let drops = Array(columns()).fill(1);
-
-    function draw(){
-      ctx.fillStyle = "rgba(0,0,0,0.08)";
-      ctx.fillRect(0,0,W,H);
-
-      // gradiente roxo -> rosa para efeito neon
-      const grad = ctx.createLinearGradient(0,0,W,0);
-      grad.addColorStop(0, "#9b30ff");
-      grad.addColorStop(1, "#ff66cc");
-      ctx.fillStyle = grad;
-      ctx.shadowColor = "#9b30ff";
-      ctx.shadowBlur = 12;
-      ctx.font = fontSize + "px monospace";
-
-      for(let i=0;i<drops.length;i++){
-        const text = letters.charAt(Math.floor(Math.random()*letters.length));
-        const x = i * fontSize;
-        const y = drops[i] * fontSize;
-        ctx.fillText(text, x, y);
-
-        if (y > H && Math.random() > 0.975) drops[i] = 0;
-        drops[i]++;
-      }
-      requestAnimationFrame(draw);
-    }
-    draw();
+    // matrix verde
+    const canvas=document.getElementById('matrix'); const ctx=canvas.getContext('2d'); let w,h,cols,drops; const fontSize=16; const glyphs='アカサタナハマヤラワ0123456789ZXCVBNM';
+    function resize(){w=canvas.width=innerWidth;h=canvas.height=innerHeight;cols=Math.floor(w/fontSize);drops=Array(cols).fill(1);} window.addEventListener('resize',resize); resize();
+    function draw(){ ctx.fillStyle='rgba(0,0,0,0.08)'; ctx.fillRect(0,0,w,h); ctx.fillStyle='#00ff40'; ctx.font=fontSize+'px monospace'; for(let i=0;i<drops.length;i++){ const text=glyphs[Math.floor(Math.random()*glyphs.length)]; ctx.fillText(text,i*fontSize,drops[i]*fontSize); if(drops[i]*fontSize>h&&Math.random()>0.975)drops[i]=0; drops[i]++; } requestAnimationFrame(draw);} draw();
   </script>
 </body>
 </html>
+
