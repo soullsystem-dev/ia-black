@@ -1,143 +1,183 @@
+
 <!doctype html>
 <html lang="pt-br">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>IA Black • Protocolo + Quiz</title>
-  <meta name="description" content="Protocolo Black com intro + quiz gamificado (XP/LVL), efeito matrix verde, preserva UTMs e envia respostas ao checkout." />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;900&display=swap" rel="stylesheet">
-
+  <title>IA Black • Protocolo</title>
   <style>
-    :root{
-      --neon:#00ff40;      /* VERDE NEON forte */
-      --neon2:#00ff40;     /* mesma cor (sem degradê) */
-      --border:#00cc33;
-      --bg:#000;
-      --card:#000000e6;
-      --muted:#b8ffcc;
-      --btnText:#001a08;   /* preto escurão nas letras */
+    :root {
+      --neon:#15ff95;
+      --neon2:#07b67a;
     }
-
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
+    body {
       margin:0;
-      font-family:"Orbitron",system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial,sans-serif;
-      background:#000;
-      color:#eafff4;
+      font-family: 'Orbitron', sans-serif;
+      background:black;
+      color:white;
       overflow-x:hidden;
     }
 
-    /* HUD */
-    .hud{
-      position:sticky; top:0; z-index:30;
-      backdrop-filter: blur(6px);
-      background:rgba(0,0,0,.55);
-      border-bottom:1px solid #004d1a;
-      padding:10px 14px;
-      display:flex; align-items:center; justify-content:space-between;
+    /* Tela inteira fundo Matrix */
+    canvas#matrix {
+      position:fixed;
+      top:0;left:0;
+      width:100%;height:100%;
+      z-index:-1;
+      background:black;
     }
-    .badge{
-      display:inline-flex; align-items:center; gap:10px;
-      font-size:12px; letter-spacing:.12em; font-weight:900;
-      color:#a6ffb8;
-      padding:10px 14px; border-radius:14px;
-      background:#001a0a;
-      box-shadow: inset 0 0 20px rgba(0,255,64,.25), 0 0 12px rgba(0,255,64,.35);
-      border:1px solid #00b33c;
-      text-shadow:0 0 8px rgba(0,255,64,.5);
+
+    /* HUD XP e Level */
+    #hud {
+      position:fixed;
+      top:10px;left:50%;
+      transform:translateX(-50%);
+      display:flex;
+      gap:10px;
+      font-size:14px;
+      background:rgba(0,0,0,.6);
+      border:1px solid var(--neon2);
+      border-radius:8px;
+      padding:6px 14px;
+      color:var(--neon);
+      box-shadow:0 0 10px var(--neon);
     }
-    .progress{ height:6px; flex:1; margin-left:16px; border-radius:999px; background:#001a0a; overflow:hidden; border:1px solid #004d1a; }
-    .progress > div{ height:100%; width:0%; background:var(--neon); box-shadow:0 0 18px rgba(0,255,64,.6); transition:width .25s ease; }
 
-    /* Fundo Matrix VERDE */
-    #matrix{ position:fixed; inset:0; z-index:-2; display:block; background:#000; }
-    .vignette{ pointer-events:none; position:fixed; inset:0; z-index:-1; background:
-      radial-gradient(1200px 500px at 50% 20%, rgba(0,0,0,.3), transparent 60%),
-      radial-gradient(1000px 600px at 50% 80%, rgba(0,0,0,.45), transparent 60%),
-      linear-gradient(0deg, rgba(0,0,0,.6), rgba(0,0,0,.6)); }
-
-    .wrap{max-width:980px; margin:0 auto; padding:22px 16px 80px}
-    .glass{ background:var(--card); border:1px solid #003d14; border-radius:26px; box-shadow:0 25px 80px rgba(0,0,0,.65), inset 0 0 25px rgba(0,255,64,.1); padding:22px; }
-
-    .hero{text-align:center; margin:42px auto 28px;}
-    .hero h1{ margin:0 0 10px; font-size:clamp(28px,7vw,64px); font-weight:900; letter-spacing:.06em; color:var(--neon); text-shadow:0 0 10px rgba(0,255,64,.9),0 0 28px rgba(0,255,64,.6),0 0 60px rgba(0,255,64,.35); }
-    .hero p{ color:#ccffd6; opacity:.9; font-weight:600; text-shadow:0 0 12px rgba(0,255,64,.35); }
-
-    .btn{ cursor:pointer; border:none; padding:16px 26px; border-radius:18px;
-      background:var(--neon); color:var(--btnText);
-      font-weight:900; letter-spacing:.12em;
-      box-shadow:0 0 40px rgba(0,255,64,.55),0 15px 28px rgba(0,0,0,.6),inset 0 0 16px rgba(0,0,0,.85);
+    /* Hero */
+    .hero {
+      text-align:center;
+      margin-top:20vh;
     }
-    .btn:hover{ transform:translateY(-1px); filter:brightness(1.05) }
+    .hero h1 {
+      font-size:28px;
+      color:var(--neon);
+      text-shadow:0 0 8px var(--neon),0 0 20px rgba(21,255,149,.6);
+      margin-bottom:20px;
+    }
+    .hero p {
+      color:#ccc;
+      margin-bottom:25px;
+    }
 
-    .answers{ display:grid; gap:14px; margin-top:16px }
-    .answer{ padding:16px 18px; border-radius:16px; border:1px solid #00b33c;
-      background:var(--neon); color:var(--btnText); font-weight:900;
-      text-shadow:0 1px 0 rgba(255,255,255,.35); box-shadow:0 6px 28px rgba(0,255,64,.45), inset 0 0 14px rgba(0,0,0,.85); }
-    .answer:hover{ filter:brightness(1.06); transform:translateY(-1px) }
+    /* Botão principal */
+    .btn {
+      background: linear-gradient(90deg,var(--neon),var(--neon2));
+      color:#000;
+      font-weight:900;
+      border-radius:18px;
+      padding:14px 24px;
+      text-transform:uppercase;
+      letter-spacing:.08em;
+      text-shadow:0 0 4px rgba(0,0,0,.6);
+      box-shadow:0 0 20px var(--neon),0 0 40px rgba(21,255,149,.5);
+      transition:transform .15s, filter .15s;
+      border:none;
+      cursor:pointer;
+    }
+    .btn:hover {
+      filter:brightness(1.15);
+      transform:translateY(-2px);
+    }
 
-    .nav{ display:flex; justify-content:space-between; margin-top:14px }
-    .nav button{ background:none; border:none; color:#b8ffcc; text-decoration:underline; cursor:pointer; font-weight:700; }
-    .nav button[disabled]{ opacity:.3; pointer-events:none }
+    /* Perguntas */
+    .card {
+      margin:40px auto;
+      max-width:500px;
+      padding:20px;
+      border-radius:18px;
+      background:rgba(0,0,0,.65);
+      border:1px solid rgba(21,255,149,.2);
+      text-align:center;
+    }
+    .card h3 {
+      color:var(--neon);
+      text-shadow:0 0 6px var(--neon);
+      margin-bottom:20px;
+    }
 
-    footer{text-align:center; padding:40px 12px; color:#99ffc2; opacity:.9}
-    .hidden{display:none!important}
+    /* Opções do quiz */
+    .answer {
+      background: rgba(21,255,149,0.75); /* VERDE NEON translúcido */
+      color:#000;                        /* Letras pretas */
+      font-weight:800;
+      border-radius:14px;
+      padding:14px;
+      margin:10px 0;
+      text-align:center;
+      box-shadow:0 0 12px var(--neon), inset 0 0 6px rgba(0,0,0,.6);
+      transition:transform .15s, filter .15s;
+      cursor:pointer;
+      display:block;
+    }
+    .answer:hover {
+      filter:brightness(1.2);
+      transform:translateY(-2px);
+    }
   </style>
 </head>
 <body>
   <canvas id="matrix"></canvas>
-  <div class="vignette"></div>
-  <div class="hud">
-    <div class="badge"><span id="xp">0 XP</span> | <span id="lvl">LVL 1</span></div>
-    <div class="progress"><div id="bar"></div></div>
-  </div>
 
-  <div class="wrap">
-    <section id="intro" class="glass">
-      <div class="hero">
-        <h1>INICIANDO PROTOCOLO BLACK…</h1>
-        <p>Sistema carregado. Pressione para continuar.</p>
-        <button id="start" class="btn">INICIAR PROTOCOLO</button>
-      </div>
-    </section>
+  <div id="hud"> <span id="xp">0 XP</span> | <span id="lvl">LVL 1</span> </div>
 
-    <form id="quiz" class="glass hidden"></form>
+  <section id="intro" class="hero">
+    <h1>INICIANDO PROTOCOLO BLACK...</h1>
+    <p>Sistema carregado. Pressione para continuar.</p>
+    <button id="startBtn" class="btn">Iniciar Protocolo</button>
+  </section>
 
-    <section id="lead" class="glass hidden">
-      <h3 style="margin:0 0 10px;color:var(--muted)">Quase lá — destrave seu acesso</h3>
-      <div style="margin-top:10px;display:grid;gap:12px">
-        <input id="nome" class="lead-input" placeholder="Seu nome (opcional)" />
-        <input id="whats" class="lead-input" placeholder="Seu WhatsApp (opcional)" />
-      </div>
-      <div style="margin-top:16px">
-        <button id="finish" type="button" class="btn">LIBERAR ACESSO</button>
-      </div>
-    </section>
-  </div>
+  <form id="quiz" class="hidden">
+    <div class="card">
+      <h3>Qual seu principal objetivo agora?</h3>
+      <button type="button" class="answer">Renda extra imediata</button>
+      <button type="button" class="answer">Estruturar vendas no sigilo</button>
+      <button type="button" class="answer">Validar um produto</button>
+      <button type="button" class="answer">Escalar o que já vende</button>
+    </div>
+  </form>
 
-  <footer>© <span id="year"></span> IA Black</footer>
+<script>
+  // ===== Efeito Matrix =====
+  const canvas=document.getElementById("matrix");
+  const ctx=canvas.getContext("2d");
+  canvas.height=window.innerHeight; canvas.width=window.innerWidth;
+  const letters="アカサタナハマヤラワ0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+  const font=14; const cols=canvas.width/font;
+  const drops=Array(cols).fill(1);
 
-  <script>
-    const QUESTIONS=[
-      {id:'objetivo',q:'Qual seu principal objetivo agora?',a:['Renda extra','Estruturar no sigilo','Validar produto','Escalar vendas']},
-      {id:'nivel',q:'Seu nível hoje?',a:['Iniciante','Intermediário','Avançado']}
-    ];
-    const $=s=>document.querySelector(s); const $$=s=>document.querySelectorAll(s);
-    let step=0;
-    function showStep(i){ step=i; $$('#quiz>section').forEach((el,idx)=>el.classList.toggle('hidden',idx!==i)); if(i>=QUESTIONS.length){$('#quiz').classList.add('hidden');$('#lead').classList.remove('hidden');}}
-    function renderQuiz(){ const f=$('#quiz'); f.innerHTML=''; QUESTIONS.forEach((q,i)=>{ const s=document.createElement('section'); s.dataset.step=i; s.innerHTML=`<h3>${q.q}</h3><div class="answers">${q.a.map(opt=>`<button type="button" class="answer" data-a="${opt}">${opt}</button>`).join('')}</div><div class="nav"><button type="button" class="prev" ${i===0?'disabled':''}>Voltar</button><button type="button" class="skip">Pular</button></div>`; f.appendChild(s); }); f.classList.remove('hidden'); showStep(0); }
-    $('#start').addEventListener('click',()=>{ $('#intro').classList.add('hidden'); renderQuiz(); });
-    document.addEventListener('click',e=>{ if(e.target.matches('.answer')){ showStep(step+1);} if(e.target.matches('.prev'))showStep(step-1); if(e.target.matches('.skip'))showStep(step+1); if(e.target.matches('#finish'))alert('Enviar ao checkout'); });
-    document.getElementById('year').textContent=new Date().getFullYear();
+  function draw(){
+    ctx.fillStyle="rgba(0,0,0,0.08)";
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+    ctx.fillStyle="#0f0"; ctx.font=font+"px monospace";
+    for(let i=0;i<drops.length;i++){
+      const txt=letters[Math.floor(Math.random()*letters.length)];
+      ctx.fillText(txt,i*font,drops[i]*font);
+      if(drops[i]*font>canvas.height && Math.random()>0.975) drops[i]=0;
+      drops[i]++;
+    }
+  }
+  setInterval(draw,40);
 
-    // matrix verde
-    const canvas=document.getElementById('matrix'); const ctx=canvas.getContext('2d'); let w,h,cols,drops; const fontSize=16; const glyphs='アカサタナハマヤラワ0123456789ZXCVBNM';
-    function resize(){w=canvas.width=innerWidth;h=canvas.height=innerHeight;cols=Math.floor(w/fontSize);drops=Array(cols).fill(1);} window.addEventListener('resize',resize); resize();
-    function draw(){ ctx.fillStyle='rgba(0,0,0,0.08)'; ctx.fillRect(0,0,w,h); ctx.fillStyle='#00ff40'; ctx.font=fontSize+'px monospace'; for(let i=0;i<drops.length;i++){ const text=glyphs[Math.floor(Math.random()*glyphs.length)]; ctx.fillText(text,i*fontSize,drops[i]*fontSize); if(drops[i]*fontSize>h&&Math.random()>0.975)drops[i]=0; drops[i]++; } requestAnimationFrame(draw);} draw();
-  </script>
+  // ===== Game Logic =====
+  let xp=0, lvl=1;
+  function addXP(n){
+    xp+=n; if(xp>=lvl*100){ lvl++; }
+    document.getElementById("xp").textContent=xp+" XP";
+    document.getElementById("lvl").textContent="LVL "+lvl;
+  }
+
+  document.getElementById("startBtn").addEventListener("click",()=>{
+    document.getElementById("intro").style.display="none";
+    document.getElementById("quiz").classList.remove("hidden");
+    addXP(100);
+  });
+
+  document.querySelectorAll(".answer").forEach(btn=>{
+    btn.addEventListener("click",()=>{
+      addXP(50);
+      alert("Você escolheu: "+btn.textContent);
+    });
+  });
+</script>
 </body>
 </html>
-
